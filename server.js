@@ -103,7 +103,7 @@ sp.on("open", function(){
                     userData.sdStatus = cardInfo.sdStatus;
                     sendResponseToDoor(userData);
                 } else {
-                    sendResponseToDoor({isActive: false, sdStatus: sdStatus});
+                    sendResponseToDoor({isActive: false, sdStatus: cardInfo.sdStatus});
                 }
                 clearData();
             });
