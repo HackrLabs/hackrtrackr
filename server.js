@@ -51,7 +51,7 @@ var sendResponseToDoor = function(userData) {
         sp.write('A');
     } else {
         console.log("Access Denied!");
-        sp.write('R');
+        //sp.write('D');
     }
 
 }
