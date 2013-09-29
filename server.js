@@ -45,7 +45,7 @@ var getCardCode = function(readData) {
 }
 
 var sendResponseToDoor = function(activityStatus) {
-    if(isActive === true) {
+    if(activityStatus === true) {
         console.log("Welcome " + fname + " " + lname + "!");
         sp.write('A');
     } else {
