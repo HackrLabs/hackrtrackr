@@ -41,12 +41,19 @@ var getCardCode = function(readData) {
     arrLen -= 2;
     var cardBuf = cardData[arrLen];
     var card = cardBuf.replace(/_/g, "");
-    return card;
+
+    // Get SDStatus
+    var sdStatus = isInSD(cardData[0]);
+
+    var cardInfo = {};
+    cardInfo.card = card;
+    cardInfo.sdStatus = sdStatus;
+    return cardInfo;
 }
 
 var sendResponseToDoor = function(userData) {
     var activityStatus = userData.isActive;
-    if(activityStatus === true) {
+    if(activityStatus === true || sdStatus === true) {
         console.log("Welcome " + userData.fname + " " + userData.lname + "!");
         sp.write('A');
     } else {
@@ -54,6 +61,16 @@ var sendResponseToDoor = function(userData) {
         //sp.write('D');
     }
 
+}
+
+var isInSD = function(readData) {
+    var sdStatus;
+    if(readData.indexOf("2") == 1) {
+        sdStatus = true;
+    } else {
+        sdStatus = false;
+    }
+    return sdStatus;
 }
 
 sp.on("open", function(){
@@ -71,7 +88,8 @@ sp.on("open", function(){
         
 	// If the full buffer is set check the database.
 	if(readData.indexOf("?") != -1) {
-            var card = getCardCode(readData);
+            var cardInfo = getCardCode(readData);
+            var card = cardInfo.card;
             // Check for Door Auth Code
             // Check postgres for nfc/rfid match
             pgClient.query("SELECT firstname, lastname, isactive from members m left join cards c on m.memberid = c.memberid where c.cardid = '" + card + "'", function(err, result) {
@@ -81,9 +99,11 @@ sp.on("open", function(){
                     userData.fname = result.rows[0].firstname;
                     userData.lname = result.rows[0].lastname;
                     userData.isActive = result.rows[0].isactive;
+                    userData.card = card;
+                    userData.sdStatus = cardInfo.sdStatus;
                     sendResponseToDoor(userData);
                 } else {
-                    sendResponseToDoor({isActive: false});
+                    sendResponseToDoor({isActive: false, sdStatus: sdStatus});
                 }
                 clearData();
             });
