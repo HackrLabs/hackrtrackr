@@ -44,9 +44,9 @@ var getCardCode = function(readData) {
     return card;
 }
 
-var sendResponseToDoor = function(activityStatus) {
+var sendResponseToDoor = function(activityStatus, userData) {
     if(activityStatus === true) {
-        console.log("Welcome " + fname + " " + lname + "!");
+        console.log("Welcome " + userData.fname + " " + userData.lname + "!");
         sp.write('A');
     } else {
         console.log("Access Denied!");
@@ -79,7 +79,9 @@ sp.on("open", function(){
                     var fname = result.rows[0].firstname;
                     var lname = result.rows[0].lastname;
                     var isActive = result.rows[0].isactive;
-                    sendResponseToDoor(isActive);
+                    userData.fname = fname;
+                    userData.lname = lname;
+                    sendResponseToDoor(isActive, userData);
                 } else {
                     sendResponseToDoor(false);
                 }
