@@ -3,7 +3,9 @@ var serial = require('serialport').SerialPort,
 
 var sp = new serial("/dev/ttyUSB0", {
     baudrate: 57600
-}); 
+});
+
+
 
 var pgConn = "postgres://hackertracker:hackallthethings@localhost/hackertracker";
 
@@ -15,7 +17,7 @@ pgClient.connect(function(err) {
         return console.error('Could not connect to postgres', err);
     } else {
         console.log('Connected to Postgres');
-        sp.write("Connect to Postgres");
+        sp.write("Connected to Postgres");
     }
 });
 
@@ -32,6 +34,7 @@ function clearData() {
 
 sp.on("open", function(){
     console.log("open");
+    clearData();
     sp.on('data', function(data){
         var dataStringBuf = new String(data);
         if(dataStringBuf.indexOf("*") != 1) {
@@ -47,12 +50,17 @@ sp.on("open", function(){
             console.log("Card: " + card);
             // Check for Door Auth Code
             // Check postgres for nfc/rfid match
-            pgClient.query("SELECT firstname, lastname from members m left join cards c on m.memberid = c.memberid where c.cardid = '" + card + "'", function(err, result) {
+            pgClient.query("SELECT firstname, lastname, isactive from members m left join cards c on m.memberid = c.memberid where c.cardid = '" + card + "'", function(err, result) {
                 if(result.rowCount > 0) {
                     // Grab member Data
                     var fname = result.rows[0].firstname;
                     var lname = result.rows[0].lastname;
-                    console.log("Welcome " + fname + " " + lname + "!");
+                    var isActive = result.rows[0].isactive;
+                    if(isActive === true) {
+                        console.log("Welcome " + fname + " " + lname + "!");
+                    } else {
+                        console.log("Access Denied!");
+                    }
                 } else {
                     console.log("This is not the lab you're looking for.")
                 }
