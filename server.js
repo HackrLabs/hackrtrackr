@@ -1,7 +1,7 @@
 var serial = require('serialport').SerialPort,
     pg = require('pg');
 
-var sp = new serial("/dev/ttyACM1", {
+var sp = new serial("/dev/ttyUSB0", {
     baudrate: 57600
 }); 
 
