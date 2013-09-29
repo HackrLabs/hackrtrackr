@@ -44,7 +44,8 @@ var getCardCode = function(readData) {
     return card;
 }
 
-var sendResponseToDoor = function(activityStatus, userData) {
+var sendResponseToDoor = function(userData) {
+    var activityStatus = userData.isactive;
     if(activityStatus === true) {
         console.log("Welcome " + userData.fname + " " + userData.lname + "!");
         sp.write('A');
@@ -61,7 +62,7 @@ sp.on("open", function(){
         clearData();
         var dataStringBuf = new String(data);
         if(dataStringBuf.indexOf("@") == 1) {
-	    readData = dataStringBuf;
+            readData = dataStringBuf;
         } else if(dataStringBuf.indexOf("*") != 1) {
             readData += dataStringBuf;
        	} else {
@@ -76,15 +77,13 @@ sp.on("open", function(){
             pgClient.query("SELECT firstname, lastname, isactive from members m left join cards c on m.memberid = c.memberid where c.cardid = '" + card + "'", function(err, result) {
                 if(result.rowCount > 0) {
                     // Grab member Data
-                    var fname = result.rows[0].firstname;
-                    var lname = result.rows[0].lastname;
-                    var isActive = result.rows[0].isactive;
                     var userData = {};
-                    userData.fname = fname;
-                    userData.lname = lname;
-                    sendResponseToDoor(isActive, userData);
+                    userData.fname = result.rows[0].firstname;
+                    userData.lname = result.rows[0].lastname;
+                    userData.isActive = result.rows[0].isactive;
+                    sendResponseToDoor(userData);
                 } else {
-                    sendResponseToDoor(false);
+                    sendResponseToDoor({isactive: false});
                 }
                 clearData();
             });
