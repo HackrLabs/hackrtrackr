@@ -5,6 +5,7 @@ var serialport = require('serialport'),
 var sp = new serial("/dev/ttyUSB0", 
 { baudrate: 57600
 , parser: serialport.parsers.readline("\n")
+, buffersize: 100
 });
 
 
@@ -26,7 +27,7 @@ pgClient.connect(function(err) {
 // Check for connection 
 var readData = "";
 
-function clearData() {
+var clearData = function() {
     dataStringBuf = "";
     readData = "";
     cardData = "";
@@ -34,14 +35,34 @@ function clearData() {
     card = "";
 }
 
+var getCardCode = function(readData) {
+    var cardData = readData.split(",");
+    var arrLen = cardData.length;
+    arrLen -= 2;
+    var cardBuf = cardData[arrLen];
+    var card = cardBuf.replace(/_/g, "");
+    return card;
+}
+
+var sendResponseToDoor = function(activityStatus) {
+    if(isActive === true) {
+        console.log("Welcome " + fname + " " + lname + "!");
+        sp.write('A');
+    } else {
+        console.log("Access Denied!");
+        sp.write('R');
+    }
+
+}
+
 sp.on("open", function(){
     console.log("open");
     sp.on('data', function(data){
         clearData();
-	var dataStringBuf = new String(data);
+        var dataStringBuf = new String(data);
         if(dataStringBuf.indexOf("@") == 1) {
 	    readData = dataStringBuf;
-	} else if(dataStringBuf.indexOf("*") != 1) {
+        } else if(dataStringBuf.indexOf("*") != 1) {
             readData += dataStringBuf;
        	} else {
             readData += dataStringBuf;
@@ -49,11 +70,7 @@ sp.on("open", function(){
         
 	// If the full buffer is set check the database.
 	if(readData.indexOf("*") != -1) {
-            var cardData = readData.split(",");
-            var arrLen = cardData.length;
-	    arrLen -= 2;
-	    var cardBuf = cardData[arrLen];
-            var card = cardBuf.replace(/_/g, "");
+            var card = getCardCode(readData);
             // Check for Door Auth Code
             // Check postgres for nfc/rfid match
             pgClient.query("SELECT firstname, lastname, isactive from members m left join cards c on m.memberid = c.memberid where c.cardid = '" + card + "'", function(err, result) {
@@ -62,16 +79,9 @@ sp.on("open", function(){
                     var fname = result.rows[0].firstname;
                     var lname = result.rows[0].lastname;
                     var isActive = result.rows[0].isactive;
-                    if(isActive === true) {
-                        console.log("Welcome " + fname + " " + lname + "!");
-			sp.write('A');
-                    } else {
-                        console.log("Access Denied!");
- 			sp.write('R');
-                    }
+                    sendResponseToDoor(isActive);
                 } else {
-                    console.log("This is not the lab you're looking for.");
-		    sp.write('R');
+                    sendResponseToDoor(false);
                 }
                 clearData();
             });
