@@ -1,8 +1,10 @@
-var serial = require('serialport').SerialPort,
+var serialport = require('serialport'),
+    serial = serialport.SerialPort,
     pg = require('pg');
 
-var sp = new serial("/dev/ttyUSB0", {
-    baudrate: 57600
+var sp = new serial("/dev/ttyUSB0", 
+{ baudrate: 57600
+, parser: serialport.parsers.readline("\n")
 });
 
 
@@ -34,20 +36,24 @@ function clearData() {
 
 sp.on("open", function(){
     console.log("open");
-    clearData();
     sp.on('data', function(data){
-        var dataStringBuf = new String(data);
-        if(dataStringBuf.indexOf("*") != 1) {
+        clearData();
+	var dataStringBuf = new String(data);
+        if(dataStringBuf.indexOf("@") == 1) {
+	    readData = dataStringBuf;
+	} else if(dataStringBuf.indexOf("*") != 1) {
             readData += dataStringBuf;
-        } else {
+       	} else {
             readData += dataStringBuf;
         }
-
-        if(readData.indexOf("*") != -1) {
+        
+	// If the full buffer is set check the database.
+	if(readData.indexOf("*") != -1) {
             var cardData = readData.split(",");
-            var cardBuf = cardData[4];
+            var arrLen = cardData.length;
+	    arrLen -= 2;
+	    var cardBuf = cardData[arrLen];
             var card = cardBuf.replace(/_/g, "");
-            console.log("Card: " + card);
             // Check for Door Auth Code
             // Check postgres for nfc/rfid match
             pgClient.query("SELECT firstname, lastname, isactive from members m left join cards c on m.memberid = c.memberid where c.cardid = '" + card + "'", function(err, result) {
@@ -58,11 +64,14 @@ sp.on("open", function(){
                     var isActive = result.rows[0].isactive;
                     if(isActive === true) {
                         console.log("Welcome " + fname + " " + lname + "!");
+			sp.write('A');
                     } else {
                         console.log("Access Denied!");
+ 			sp.write('R');
                     }
                 } else {
-                    console.log("This is not the lab you're looking for.")
+                    console.log("This is not the lab you're looking for.");
+		    sp.write('R');
                 }
                 clearData();
             });
