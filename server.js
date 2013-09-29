@@ -53,7 +53,7 @@ var getCardCode = function(readData) {
 
 var sendResponseToDoor = function(userData) {
     var activityStatus = userData.isActive;
-    if(activityStatus === true || sdStatus === true) {
+    if(activityStatus === true || userData.sdStatus === true) {
         console.log("Welcome " + userData.fname + " " + userData.lname + "!");
         sp.write('A');
     } else {
