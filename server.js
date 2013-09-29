@@ -70,7 +70,7 @@ sp.on("open", function(){
         }
         
 	// If the full buffer is set check the database.
-	if(readData.indexOf("*") != -1) {
+	if(readData.indexOf("?") != -1) {
             var card = getCardCode(readData);
             // Check for Door Auth Code
             // Check postgres for nfc/rfid match
