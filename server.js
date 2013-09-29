@@ -79,6 +79,7 @@ sp.on("open", function(){
                     var fname = result.rows[0].firstname;
                     var lname = result.rows[0].lastname;
                     var isActive = result.rows[0].isactive;
+                    var userData = {};
                     userData.fname = fname;
                     userData.lname = lname;
                     sendResponseToDoor(isActive, userData);
