@@ -45,7 +45,7 @@ var getCardCode = function(readData) {
 }
 
 var sendResponseToDoor = function(userData) {
-    var activityStatus = userData.isactive;
+    var activityStatus = userData.isActive;
     if(activityStatus === true) {
         console.log("Welcome " + userData.fname + " " + userData.lname + "!");
         sp.write('A');
@@ -83,7 +83,7 @@ sp.on("open", function(){
                     userData.isActive = result.rows[0].isactive;
                     sendResponseToDoor(userData);
                 } else {
-                    sendResponseToDoor({isactive: false});
+                    sendResponseToDoor({isActive: false});
                 }
                 clearData();
             });
