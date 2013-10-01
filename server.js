@@ -53,11 +53,13 @@ var getCardCode = function(readData) {
 
 var sendResponseToDoor = function(userData) {
     var activityStatus = userData.isActive;
+    var dateString = new Date();
+    dateString = dateString.toLocaleString();
     if(activityStatus === true || userData.sdStatus === true) {
-        console.log("Welcome " + userData.fname + " " + userData.lname + "!");
+        console.log("Welcome " + userData.fname + " " + userData.lname + " - " + dateString);
         sp.write('A');
     } else {
-        console.log("Access Denied!");
+        console.log("Card: " + userData.card + ", Access Denied By Server - " + dateString);
         //sp.write('D');
     }
 
@@ -103,7 +105,7 @@ sp.on("open", function(){
                     userData.sdStatus = cardInfo.sdStatus;
                     sendResponseToDoor(userData);
                 } else {
-                    sendResponseToDoor({isActive: false, sdStatus: cardInfo.sdStatus});
+                    sendResponseToDoor({isActive: false, sdStatus: cardInfo.sdStatus, card: cardInfo.card});
                 }
                 clearData();
             });
