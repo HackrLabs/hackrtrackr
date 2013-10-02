@@ -53,11 +53,13 @@ var getCardCode = function(readData) {
 
 var sendResponseToDoor = function(userData) {
     var activityStatus = userData.isActive;
+    var dateString = new Date();
+    dateString = dateString.toLocaleString();
     if(activityStatus === true || userData.sdStatus === true) {
-        console.log("Welcome " + userData.fname + " " + userData.lname + "!");
+        console.log("Welcome " + userData.fname + " " + userData.lname + " - " + dateString);
         sp.write('A');
     } else {
-        console.log("Access Denied!");
+        console.log("Card: " + userData.card + ", Access Denied By Server - " + dateString);
         //sp.write('D');
     }
 
@@ -71,6 +73,32 @@ var isInSD = function(readData) {
         sdStatus = false;
     }
     return sdStatus;
+}
+
+var log2postgres = function(userData) {
+    var activityStatus = userData.isActive;
+    if(activityStatus == true || userData.sdStatus == true) {
+        var desc;
+        if(activityStatus == true) {
+	    if(userData.sdStatus == true) {
+                desc = 'Access by both';
+            } else {
+                desc = 'Access By Server';
+            }
+	} else if (userData.sdStatus) {
+            desc = 'Denied by Server, Access by SD';
+        }
+	desc = desc + ", card: " + userData.card;
+	var memberID = (userData.memberid ? userData.memberid : 00000);
+    var insert2labaccess = "INSERT INTO labaccess (memberid, description) VALUES (" + memberID + ", '" + desc + "')";
+	pgClient.query(insert2labaccess, function(err, result) {
+		if(err) {
+                    console.log("SQL Error - " + insert2labaccess, err);
+                } else {
+                    console.log("Entry added to DB");
+                }
+        });
+    }
 }
 
 sp.on("open", function(){
@@ -92,19 +120,25 @@ sp.on("open", function(){
             var card = cardInfo.card;
             // Check for Door Auth Code
             // Check postgres for nfc/rfid match
-            pgClient.query("SELECT memberid, firstname, lastname, isactive from members m left join cards c on m.memberid = c.memberid where c.cardid = '" + card + "'", function(err, result) {
+            pgClient.query("SELECT m.memberid as memberid, firstname, lastname, isactive from members m left join cards c on m.memberid = c.memberid where c.cardid = '" + card + "'", function(err, result) {
                 if(result.rowCount > 0) {
                     // Grab member Data
                     var userData = {};
-                    userData.memberId = result.rows[0].memberid;
+                    userData.memberid = result.rows[0].memberid;
                     userData.fname = result.rows[0].firstname;
                     userData.lname = result.rows[0].lastname;
                     userData.isActive = result.rows[0].isactive;
                     userData.card = card;
                     userData.sdStatus = cardInfo.sdStatus;
                     sendResponseToDoor(userData);
+                    log2postgres(userData);
                 } else {
-                    sendResponseToDoor({isActive: false, sdStatus: cardInfo.sdStatus});
+                    var userData = {};
+                    userData.isActive = false;
+                    userData.sdStatus = cardInfo.sdStatus;
+                    userData.card = cardInfo.card;
+                    sendResponseToDoor(userData);
+                    log2postgres(userData);
                 }
                 clearData();
             });
