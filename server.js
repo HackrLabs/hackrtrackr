@@ -77,28 +77,28 @@ var isInSD = function(readData) {
 
 var log2postgres = function(userData) {
     var activityStatus = userData.isActive;
+    var desc;
     if(activityStatus == true || userData.sdStatus == true) {
-        var desc;
         if(activityStatus == true) {
-	    if(userData.sdStatus == true) {
-                desc = 'Access by both';
+            if(userData.sdStatus == true) {
+                    desc = 'Access by both';
             } else {
                 desc = 'Access By Server';
             }
-	} else if (userData.sdStatus) {
+        } else if (userData.sdStatus) {
             desc = 'Denied by Server, Access by SD';
         }
-	desc = desc + ", card: " + userData.card;
-	var memberID = (userData.memberid ? userData.memberid : 00000);
-    var insert2labaccess = "INSERT INTO labaccess (memberid, description) VALUES (" + memberID + ", '" + desc + "')";
-	pgClient.query(insert2labaccess, function(err, result) {
-		if(err) {
-                    console.log("SQL Error - " + insert2labaccess, err);
-                } else {
-                    console.log("Entry added to DB");
-                }
-        });
     }
+    desc = (desc + ", card: " + userData.card);
+    var memberID = (userData.memberid ? userData.memberid : 00000);
+    var insert2labaccess = "INSERT INTO labaccess (memberid, description) VALUES (" + memberID + ", '" + desc + "')";
+    pgClient.query(insert2labaccess, function(err, result) {
+        if(err) {
+            console.log("SQL Error - " + insert2labaccess, err);
+        } else {
+            console.log("Entry added to DB");
+        }
+    });
 }
 
 sp.on("open", function(){
