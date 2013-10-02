@@ -92,10 +92,11 @@ sp.on("open", function(){
             var card = cardInfo.card;
             // Check for Door Auth Code
             // Check postgres for nfc/rfid match
-            pgClient.query("SELECT firstname, lastname, isactive from members m left join cards c on m.memberid = c.memberid where c.cardid = '" + card + "'", function(err, result) {
+            pgClient.query("SELECT memberid, firstname, lastname, isactive from members m left join cards c on m.memberid = c.memberid where c.cardid = '" + card + "'", function(err, result) {
                 if(result.rowCount > 0) {
                     // Grab member Data
                     var userData = {};
+                    userData.memberId = result.rows[0].memberid;
                     userData.fname = result.rows[0].firstname;
                     userData.lname = result.rows[0].lastname;
                     userData.isActive = result.rows[0].isactive;
