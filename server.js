@@ -135,8 +135,14 @@ sp.on("open", function(){
                     var serverCard = result.rows[0].cardid;
                     if(serverCard.indexOf('?') != -1) {
                         // Replace the ?? with the site code
-                        var newCard = serverCard.replace(/??/, siteCode);
+                        var newCard = serverCard.replace(/\?\?/, siteCode);
                         console.log('Corrected Card: ' + newCard);
+                        var updateCard = "UPDATE cards SET cardid = '" + newCard + "' WHERE cardid='" + serverCard +"' AND memberid='" + result.rows[0].memberid + "'";
+                        pgClient.query(updateCard, function(err, res) {
+                            if(err) {
+                                console.log('Error updating card', err);
+                            }
+                        })
                     }
                     var userData = {};
                     userData.memberid = result.rows[0].memberid;
