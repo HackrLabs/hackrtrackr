@@ -118,14 +118,21 @@ sp.on("open", function(){
 	if(readData.indexOf("?") != -1) {
             var cardInfo = getCardCode(readData);
             var card = cardInfo.card;
-            var siteCode = card.substr(0,1);
+            var siteCode = card.substr(0,2);
             var cardId = card.substr(2, card.length);
             console.log('Card ID: ' + cardId + ', Site Code: ' + siteCode);
             // Check for Door Auth Code
             // Check postgres for nfc/rfid match
-            pgClient.query("SELECT m.memberid as memberid, firstname, lastname, isactive from members m left join cards c on m.memberid = c.memberid where c.cardid = '" + card + "'", function(err, result) {
+            pgClient.query("SELECT m.memberid as memberid, firstname, lastname, isactive, c.cardid from members m left join cards c on m.memberid = c.memberid where c.cardid LIKE '" + cardId + "'", function(err, result) {
                 if(result.rowCount > 0) {
                     // Grab member Data
+                    // Check for index of ??
+                    var serverCard = result.rows[0].cardid;
+                    if(serverCard.indexOf('??') == 1) {
+                        // Replace the ?? with the site code
+                        var newCard = serverCard.replace(/??/, siteCode);
+                        console.log('Corrected Card: ' + newCard);
+                    }
                     var userData = {};
                     userData.memberid = result.rows[0].memberid;
                     userData.fname = result.rows[0].firstname;
