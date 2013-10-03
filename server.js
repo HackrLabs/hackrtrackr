@@ -133,7 +133,7 @@ sp.on("open", function(){
                     // Grab member Data
                     // Check for index of ??
                     var serverCard = result.rows[0].cardid;
-                    if(serverCard.indexOf('??') == 1) {
+                    if(serverCard.indexOf('?') != -1) {
                         // Replace the ?? with the site code
                         var newCard = serverCard.replace(/??/, siteCode);
                         console.log('Corrected Card: ' + newCard);
