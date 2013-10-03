@@ -128,7 +128,6 @@ sp.on("open", function(){
                 if(err) {
                     console.log('Error Querying DB.', err);
                 }
-                console.log('Query: ' + cardCheckQuery);
                 if(result.rowCount > 0) {
                     // Grab member Data
                     // Check for index of ??
@@ -136,7 +135,6 @@ sp.on("open", function(){
                     if(serverCard.indexOf('?') != -1) {
                         // Replace the ?? with the site code
                         var newCard = serverCard.replace(/\?\?/, siteCode);
-                        console.log('Corrected Card: ' + newCard);
                         var updateCard = "UPDATE cards SET cardid = '" + newCard + "' WHERE cardid='" + serverCard +"' AND memberid='" + result.rows[0].memberid + "'";
                         pgClient.query(updateCard, function(err, res) {
                             if(err) {
