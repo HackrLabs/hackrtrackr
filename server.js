@@ -123,7 +123,12 @@ sp.on("open", function(){
             console.log('Card ID: ' + cardId + ', Site Code: ' + siteCode);
             // Check for Door Auth Code
             // Check postgres for nfc/rfid match
-            pgClient.query("SELECT m.memberid as memberid, firstname, lastname, isactive, c.cardid from members m left join cards c on m.memberid = c.memberid where c.cardid = '" + card + "' OR c.cardid LIKE '%" + cardId + "'", function(err, result) {
+            var cardCheckQuery = "SELECT m.memberid as memberid, firstname, lastname, isactive, c.cardid from members m left join cards c on m.memberid = c.memberid where c.cardid = '" + card + "' OR c.cardid LIKE '%" + cardId + "'";
+            pgClient.query(cardCheckQuery, function(err, result) {
+                if(err) {
+                    console.log('Error Querying DB.', err);
+                }
+                console.log('Query: ' + cardCheckQuery);
                 if(result.rowCount > 0) {
                     // Grab member Data
                     // Check for index of ??
