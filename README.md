@@ -5,6 +5,7 @@
 1. Postgres
 2. Node.JS
 3. NPM
+4. ExpressJS
 
 ### Getting Started
 1. Install Postgres
