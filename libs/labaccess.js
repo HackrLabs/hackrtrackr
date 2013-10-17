@@ -1,7 +1,8 @@
 var pg = require('pg'),
-    async = require('async');
+    async = require('async'),
+    config = require('./config.js');
 
-var pgConn = "postgres://hackertracker:hackallthethings@localhost/hackertracker";
+var pgConn = "postgres://" + config.psqlUser + ":" + config.psqlPassword + "@" + config.psqlHost + "/" + config.psqlDatabase;
 var pgClient = new pg.Client(pgConn);
 
 
