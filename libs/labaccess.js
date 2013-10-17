@@ -2,7 +2,7 @@ var pg = require('pg'),
     async = require('async'),
     config = require('./config.js');
 
-var pgConn = "postgres://" + config.psqlUser + ":" + config.psqlPassword + "@" + config.psqlHost + "/" + config.psqlDatabase;
+var pgConn = "postgres://" + config.postgres.user + ":" + config.postgres.password + "@" + config.postgres.host + "/" + config.postgres.database;
 var pgClient = new pg.Client(pgConn);
 
 

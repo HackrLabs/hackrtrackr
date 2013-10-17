@@ -1,6 +1,7 @@
 var serialport = require('serialport'),
     serial = serialport.SerialPort,
-    pg = require('pg');
+    pg = require('pg'),
+    config = require('./libs/config.js');
 
 var sp = new serial("/dev/ttyUSB0", 
 { baudrate: 57600
@@ -10,7 +11,7 @@ var sp = new serial("/dev/ttyUSB0",
 
 
 
-var pgConn = "postgres://hackertracker:hackallthethings@localhost/hackertracker";
+var pgConn = "postgres://" + config.postgres.user +":" + config.postgres.password  +  "@" + config.postgres.host + "/" + config.postgres.database;
 
 var pgClient = new pg.Client(pgConn);
 
