@@ -24,6 +24,32 @@ exports.findAll = function(req, res) {
         }
 
         var results = result.rows;
-        res.send(results);
+        var callback = req.query.callback
+        var format = req.query.format;
+        if(typeof format != "undefined" || format != null) {
+            res.send(JSON.stringify(results));
+        } else {
+            res.send(callback + '(' + JSON.stringify(results) + ')');
+        }
+    });
+}
+
+exports.getByMemberId = function(req, res) {
+    var id = req.route.params.id;
+    var pgQueryFindById = "SELECT * from labaccess WHERE memberid = '" + id + "' ORDER BY logintime DESC";
+    pgClient.query(pgQueryFindById, function(err, result){
+        if(err) {
+            res.send({error: 1, errMsg: 'Error Querying Hacker Tracker ' + err})
+            return console.error('Error Querying Hacker Tracker', err);
+        } else {
+            var results = result.rows;
+            var callback = req.query.callback;
+            var format = req.query.format;
+            if(typeof format != "undefined" || format != null) {
+                res.send(JSON.stringify(results));
+            } else {
+                res.send(callback + '(' + JSON.stringify(results) + ')');
+            }
+        }
     });
 }
