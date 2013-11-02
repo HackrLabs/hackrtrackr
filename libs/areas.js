@@ -88,30 +88,6 @@ exports.findAll = function(req, res) {
         });
     });
 }
-
-exports.getByName = function(req, res) {
-    var name = req.route.params.name;
-    var pgQueryFindByName = "SELECT * from areas WHERE name='"  + name + "'";
-    pgClient.query(pgQueryFindByName, function(err, result){
-        if(err) {
-            res.send({error: 1, errMsg: 'Error Querying Hacker Tracker ' + err})
-            return console.error('Error Querying Hacker Tracker', err);
-        } else {
-            var results = result.rows;
-            var callback = req.query.callback;
-            var format = req.query.format;
-            getUniqueItems(results, function(response) {
-                var areas_with_items = {};
-                areas_with_items.areas = response;
-                if(typeof format != "undefined" || format != null) {
-                    res.send(JSON.stringify(areas_with_items));
-                } else {
-                    res.send(callback + '(' + JSON.stringify(areas_with_items) + ')');
-                }
-            });
-        }
-    });
-}
 exports.getById = function(req, res) {
     var id = req.route.params.id;
     var pgQueryFindByName = "SELECT * from areas WHERE id='"  + id + "'";
