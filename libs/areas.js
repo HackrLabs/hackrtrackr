@@ -23,7 +23,7 @@ pgClient.connect(function(err) {
  * @param {function} callback - Callback Function
  */
 function getUniqueItems(res, areas, uniqueItemsCallback) {
-    var areasWithItems = [];
+    var areasWithItemsAndTickets = [];
     async.eachSeries(areas, function(area, areas_callback){
         var pgAreaItemsQuery = "SELECT i.* FROM areas a LEFT JOIN unique_items i ON a.id = i.area_id WHERE a.id='" + area.id + "'";
         var unique_items = pgClient.query(pgAreaItemsQuery, function(err, itemsForArea){
@@ -31,24 +31,22 @@ function getUniqueItems(res, areas, uniqueItemsCallback) {
                 res.send({error: 1, errorMsg: 'Error Receiving Items based on Area'})
                 return console.error('Error Receiving Items based on Area', err);
             } else {
-                var item = itemsForArea.rows;
-                //getTickets(res, item, function(itemsWithTickets) {
-                    area.items = item;
-                    areasWithItems.push(area);
-                    if(areasWithItems.length < areas.length) {
-                        areas_callback();
-                    }
-                //});
+                var itemsForArea = itemsForArea.rows;
+                getTickets(res, itemsForArea, function(getTicketsResponse) {
+                    area.items = getTicketsResponse;
+                    areasWithItemsAndTickets.push(area);
+                    areas_callback();
+                });
             }
         });
         unique_items.on('end', function(results){
-            if(areas.length === areasWithItems.length) {
+            if(areas.length === areasWithItemsAndTickets.length) {
                 areas_callback();
             }
         });
     }, function(){
-        if(typeof uniqueItemsCallback === "function" && areas.length === areasWithItems.length) {
-            uniqueItemsCallback(areasWithItems);
+        if(typeof uniqueItemsCallback === "function" && areas.length === areasWithItemsAndTickets.length) {
+            uniqueItemsCallback(areasWithItemsAndTickets);
         }
     });
 }
@@ -61,9 +59,9 @@ function getUniqueItems(res, areas, uniqueItemsCallback) {
  * @param {object} items - Array of Item Objects
  * @param {function} ticketsCallback - Callback Function
  */
-function getTickets(res, items, ticketsCallback) {
+function getTickets(res, itemsForArea, ticketsCallback) {
     // Instantiate Array of ticket objects to be returned
-    var tickets = [];
+    var getTicketsResponse = [];
 
     /*
      * Iterate through each item
@@ -71,28 +69,37 @@ function getTickets(res, items, ticketsCallback) {
      * Append tickets to Item
      * Return Item when done
      */
-    async.eachSeries(items, function(item, item_cb) {
+    async.eachSeries(itemsForArea, function(item, item_cb) {
         // Create PG Query Statement
         var pgAreaItemsQuery = "SELECT t.* FROM unique_items i LEFT JOIN tickets t ON t.fuid = i.id WHERE i.id='" + item.id + "'";
         // Query PG for tickets
-        var getTickets = pgClient.query(pgAreaItemsQuery, function(err, result){
+        var getTickets = pgClient.query(pgAreaItemsQuery, function(err, itemTickets){
             if(err) {
                 res.send({error: 1, errorMsg: 'Error Receiving Items based on Area'})
                 return console.error('Error Receiving Item Tickets', err);
             } else {
-                var ticket = result.rows;
-                if(result.rowCount != 0 || result.rows[0].id != null) {
+                // Push Row information into Ticket
+                var ticket = itemTickets.rows;
+                
+                // Check to make sure there is a row and that it's not null
+                if(itemTickets.rowCount != 0 && itemTickets.rows[0].id != null) {
+                    // Push Ticket into item.tickets
                     item.tickets = ticket;
-                    tickets.push(item);
+                } else {
+                    item.tickets = [];
                 }
+                // Push Item into Tickets Response
+                getTicketsResponse.push(item);
+                
+                
             }
         });
         getTickets.on('end', function(results){
-            cb();
+            item_cb();
         });
     }, function(){
-        if(typeof callback === "function") {
-            callback(tickets);
+        if(typeof ticketsCallback === "function" && itemsForArea.length === getTicketsResponse.length) {
+            ticketsCallback(getTicketsResponse);
         }
     });
 }
