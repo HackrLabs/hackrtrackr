@@ -1,13 +1,14 @@
 var pg = require('pg'),
     async = require('async'),
     config = require('./config.js'),
-    uniqueItems = require('./unique_items');
+    uniqueItems = require('./unique_items'),
+    redis = require('redis');
 
+// Create PG Connection String and Client
 var pgConn = "postgres://" + config.postgres.user + ":" + config.postgres.password + "@" + config.postgres.host + "/" + config.postgres.database;
 var pgClient = new pg.Client(pgConn);
 
-
-/* Connect to Postgres Database */
+// Connect to Postgres Database
 pgClient.connect(function(err) {
     if(err) {
         console.log('Could not connect to postgres', err); 
@@ -18,7 +19,10 @@ pgClient.connect(function(err) {
 
 
 
-exports.findAll = function(req, res) {
+/**
+ * Retreives all Areas, Items and Tickets
+ */
+var findAll = function(req, res) {
     var pgQueryFindAll = "SELECT * FROM areas";
     pgClient.query(pgQueryFindAll, function(err, areas) {
         if(err) {
@@ -40,7 +44,10 @@ exports.findAll = function(req, res) {
         });
     });
 }
-exports.getById = function(req, res) {
+/**
+ * Retreives Area, Items and Tickets by Id
+ */
+var getById = function(req, res) {
     var id = req.route.params.id;
     var pgQueryFindByName = "SELECT * from areas WHERE id='"  + id + "'";
     pgClient.query(pgQueryFindByName, function(err, areas){
@@ -63,3 +70,8 @@ exports.getById = function(req, res) {
         }
     });
 }
+
+module.exports = 
+    { findAll: findAll
+    , getById: getById
+    };
