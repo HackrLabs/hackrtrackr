@@ -15,4 +15,4 @@ app.get('/areas', areas.findAll);
 app.get('/areas/:id', areas.getById);
 
 app.listen(1234);
-console.log('Listening on port 1235');
+console.log('Listening on port 1234');
