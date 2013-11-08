@@ -78,9 +78,21 @@ var findAll = function(req, res) {
     var responseOptions = {};
     responseOptions.callback = req.query.callback;
     responseOptions.format = req.query.format;
-    var pgQueryFindAll = "SELECT * FROM areas";
-    queryPostgresForAreas(pgQueryFindAll, pgClient, res, function(allAreas){
-        respondToClient(res, responseOptions, allAreas);
+
+    redisClient.get("areas.all", function(err, reply){
+        if(err) {
+            console.error('Redis Error: ', err);
+        } else if(reply === null) {
+            var pgQueryFindAll = "SELECT * FROM areas";
+            queryPostgresForAreas(pgQueryFindAll, pgClient, res, function(allAreas){
+                redisClient.set("areas.all", JSON.stringify(allAreas));
+                console.log('Updated Redis and Used Postgres Response');
+                respondToClient(res, responseOptions, allAreas);
+            });
+        } else {
+            console.log('Using Redis Response');
+            respondToClient(res, responseOptions, JSON.parse(allAreas));
+        }
     });
 }
 /**
@@ -92,9 +104,29 @@ var getById = function(req, res) {
     responseOptions.format = req.query.format;
     
     var id = req.route.params.id;
-    var pgQueryFindById = "SELECT * from areas WHERE id='"  + id + "'";
-    queryPostgresForAreas(pgQueryFindById, pgClient, res, function(area){
-        respondToClient(res, responseOptions, area);
+    
+    // Check Redis for Area Information
+    redisClient.get("areas." + id, function(err, reply){
+        if(err) {
+            console.error('Redis Error: ', err);
+        } else {
+            console.log('Redis Replay: ', reply);
+        }
+    });
+    redisClient.get("areas." + id, function(err, reply){
+        if(err) {
+            console.error('Redis Error: ', err);
+        } else if(reply === null) {
+            var pgQueryFindById = "SELECT * from areas WHERE id='"  + id + "'";
+            queryPostgresForAreas(pgQueryFindById, pgClient, res, function(area){
+                redisClient.set("areas." + id, JSON.stringify(area));
+                console.log('Updated Redis and Used Postgres Response');
+                respondToClient(res, responseOptions, area);
+            });
+        } else {
+            console.log('Using Redis Response');
+            respondToClient(res, responseOptions, JSON.parse(reply));
+        }
     });
 }
 
