@@ -105,14 +105,6 @@ var getById = function(req, res) {
     
     var id = req.route.params.id;
     
-    // Check Redis for Area Information
-    redisClient.get("areas." + id, function(err, reply){
-        if(err) {
-            console.error('Redis Error: ', err);
-        } else {
-            console.log('Redis Replay: ', reply);
-        }
-    });
     redisClient.get("areas." + id, function(err, reply){
         if(err) {
             console.error('Redis Error: ', err);
@@ -120,11 +112,9 @@ var getById = function(req, res) {
             var pgQueryFindById = "SELECT * from areas WHERE id='"  + id + "'";
             queryPostgresForAreas(pgQueryFindById, pgClient, res, function(area){
                 redisClient.set("areas." + id, JSON.stringify(area));
-                console.log('Updated Redis and Used Postgres Response');
                 respondToClient(res, responseOptions, area);
             });
         } else {
-            console.log('Using Redis Response');
             respondToClient(res, responseOptions, JSON.parse(reply));
         }
     });
