@@ -86,6 +86,7 @@ var findAll = function(req, res) {
             var pgQueryFindAll = "SELECT * FROM areas";
             queryPostgresForAreas(pgQueryFindAll, pgClient, res, function(allAreas){
                 redisClient.set("areas.all", JSON.stringify(allAreas));
+                redisClient.expire("areas.all", config.redis.expire);
                 console.log('Updated Redis and Used Postgres Response');
                 respondToClient(res, responseOptions, allAreas);
             });
@@ -112,6 +113,7 @@ var getById = function(req, res) {
             var pgQueryFindById = "SELECT * from areas WHERE id='"  + id + "'";
             queryPostgresForAreas(pgQueryFindById, pgClient, res, function(area){
                 redisClient.set("areas." + id, JSON.stringify(area));
+                redisClient.expire("areas." + id, config.redis.expire);
                 respondToClient(res, responseOptions, area);
             });
         } else {
