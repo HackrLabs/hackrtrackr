@@ -64,7 +64,7 @@ var respondToClient = function(res, options, responseObject){
     if(typeof options.format != "undefined" || options.format != null) {
         res.send(responseObject);
     } else {
-        res.send(callback + '(' + JSON.stringify(responseObject) + ')');
+        res.send(options.callback + '(' + JSON.stringify(responseObject) + ')');
     }
 }
 
@@ -76,8 +76,8 @@ var respondToClient = function(res, options, responseObject){
  */
 var findAll = function(req, res) {
     var responseOptions = {};
-    responseOptions.callback = req.query.callback;
-    responseOptions.format = req.query.format;
+    responseOptions.callback = req.query.callback || '';
+    responseOptions.format = req.query.format || null;
 
     redisClient.get("areas.all", function(err, reply){
         if(err) {
@@ -92,7 +92,7 @@ var findAll = function(req, res) {
             });
         } else {
             console.log('Using Redis Response');
-            respondToClient(res, responseOptions, JSON.parse(allAreas));
+            respondToClient(res, responseOptions, JSON.parse(reply));
         }
     });
 }
@@ -101,8 +101,8 @@ var findAll = function(req, res) {
  */
 var getById = function(req, res) {
     var responseOptions = {};
-    responseOptions.callback = req.query.callback;
-    responseOptions.format = req.query.format;
+    responseOptions.callback = req.query.callback || '';
+    responseOptions.format = req.query.format || null;
     
     var id = req.route.params.id;
     
