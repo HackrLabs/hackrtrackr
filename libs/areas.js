@@ -2,14 +2,20 @@ var pg = require('pg'),
     async = require('async'),
     config = require('./config.js'),
     uniqueItems = require('./unique_items'),
-    redis = require('redis');
+    redis = require('redis'),
+    response = require('./response.js');
 
 // Create a Redis Client
 var redisClient = redis.createClient();
 
 // Display Redis Errors if any arise
 redisClient.on('error', function(err){
-    console.error('Redis Error: ', err)
+        err = 'Error Connection to NoSQL Database';
+        var responseOptions = {};
+        responseOptions.callback = req.query.callback || '';
+        responseOptions.format = req.query.format || null;
+        var errorResponse = response.createResponse(err, true);
+        respondToClient(res, responseOptions, errorResponse);
 })
 
 // Create PG Connection String and Client
@@ -19,7 +25,12 @@ var pgClient = new pg.Client(pgConn);
 // Connect to Postgres Database
 pgClient.connect(function(err) {
     if(err) {
-        console.log('Could not connect to postgres', err); 
+        err = 'Error Connecting to Relational Database';
+        var responseOptions = {};
+        responseOptions.callback = req.query.callback || '';
+        responseOptions.format = req.query.format || null;
+        var errorResponse = response.createResponse(err, true);
+        respondToClient(res, responseOptions, errorResponse);
     } else {
         console.log('Connect to Hacker Tracker');
     }
@@ -37,8 +48,8 @@ pgClient.connect(function(err) {
 var queryPostgresForAreas = function(query, pgClient, res, callback) {
     pgClient.query(query, function(err, areas) {
         if(err) {
-            res.send({error: 1, errMsg: 'Error Querying Hacker Tracker ' + err})
-            return console.error('Error Querying Hacker Tracker', err);
+            console.error('Error Querying Hacker Tracker', err);
+            callback({error: 1, errorMsg: 'Error Querying Relational Database'});
         }
 
         var allAreas = areas.rows;
@@ -81,18 +92,24 @@ var findAll = function(req, res) {
 
     redisClient.get("areas.all", function(err, reply){
         if(err) {
-            console.error('Redis Error: ', err);
+            err = 'Error Querying NoSQL Database for All Areas';
+            var errorResponse = response.createResponse(err, true);
+            respondToClient(res, responseOptions, errorResponse);
         } else if(reply === null) {
             var pgQueryFindAll = "SELECT * FROM areas";
             queryPostgresForAreas(pgQueryFindAll, pgClient, res, function(allAreas){
-                redisClient.set("areas.all", JSON.stringify(allAreas));
-                redisClient.expire("areas.all", config.redis.expire);
-                console.log('Updated Redis and Used Postgres Response');
-                respondToClient(res, responseOptions, allAreas);
+                if(typeof allAreas.error != "undefined") {
+                    var apiServiceResponse = response.createResponse(errMsg, true);
+                } else {
+                    redisClient.set("areas.all", JSON.stringify(allAreas));
+                    redisClient.expire("areas.all", config.redis.expire);
+                    var apiServiceResponse = response.createResponse(allAreas);
+                }
+                respondToClient(res, responseOptions, apiServiceResponse);
             });
         } else {
-            console.log('Using Redis Response');
-            respondToClient(res, responseOptions, JSON.parse(reply));
+            var apiServiceResponse = response.createResponse(JSON.parse(reply));
+            respondToClient(res, responseOptions, apiServiceResponse);
         }
     });
 }
@@ -108,16 +125,24 @@ var getById = function(req, res) {
     
     redisClient.get("areas." + id, function(err, reply){
         if(err) {
-            console.error('Redis Error: ', err);
+            err = 'Error Querying NoSQL Database for Area: ' + id;
+            var errorResponse = response.createResponse(err, true);
+            respondToClient(res, responseOptions, errorResponse);
         } else if(reply === null) {
             var pgQueryFindById = "SELECT * from areas WHERE id='"  + id + "'";
             queryPostgresForAreas(pgQueryFindById, pgClient, res, function(area){
-                redisClient.set("areas." + id, JSON.stringify(area));
-                redisClient.expire("areas." + id, config.redis.expire);
-                respondToClient(res, responseOptions, area);
+                if(typeof area.error != "undefined") {
+                    var apiServiceResponse = response.createResponse(errMsg, true);
+                } else {
+                    redisClient.set("areas." + id, JSON.stringify(area));
+                    redisClient.expire("areas." + id, config.redis.expire);
+                    var apiServiceResponse = response.createResponse(area);
+                }
+                respondToClient(res, responseOptions, apiServiceResponse);
             });
         } else {
-            respondToClient(res, responseOptions, JSON.parse(reply));
+            var apiServiceResponse = response.createResponse(JSON.parse(reply))
+            respondToClient(res, responseOptions, apiServiceResponse);
         }
     });
 }
