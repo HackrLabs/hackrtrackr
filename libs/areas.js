@@ -2,6 +2,7 @@ var pg = require('pg'),
     async = require('async'),
     config = require('./config.js'),
     uniqueItems = require('./unique_items'),
+    caveats = require('./caveats'),
     redis = require('redis'),
     response = require('./response.js');
 
@@ -53,12 +54,15 @@ var queryPostgresForAreas = function(query, pgClient, res, callback) {
         }
 
         var allAreas = areas.rows;
-        uniqueItems.getUniqueItems(pgClient, res, allAreas, function(fullAreaInfo) {
-            var areas_with_items = {};
-            areas_with_items.areas = fullAreaInfo;
-            if(typeof callback === "function") {
-                callback(areas_with_items);
-            }
+        uniqueItems.getUniqueItems(pgClient, res, allAreas, function(AreaInfoWithoutCaveats) {
+            // Get the Caveats
+            caveats.getCaveats(pgClient, res, AreaInfoWithoutCaveats, function(fullAreaInfo){
+                var areas_with_items = {};
+                areas_with_items.areas = fullAreaInfo;
+                if(typeof callback === "function") {
+                    callback(areas_with_items);
+                }
+            });
         });
     });
 }
