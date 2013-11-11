@@ -5,33 +5,33 @@ var async = require('async');
  * Function For Getting Unique Items in an Area
  * @function
  * @param {object} res - Response Object from ExpressJS
- * @param {object} areas - Areas object for getting Items
+ * @param {object} items - Areas object for getting Items
  * @param {function} callback - Callback Function
  */
-var getCaveats = function(pgClient, res, areas, caveatsCallback) {
-    var areaWithCaveats = [];
-    async.eachSeries(areas, function(area, areas_callback){
-        var pgAreaCaveatsQuery = "SELECT c.* FROM areas a LEFT JOIN caveats c ON a.id = c.fuid WHERE a.id='" + area.id + "'";
-        var caveats = pgClient.query(pgAreaCaveatsQuery, function(err, caveatsForArea){
+var getCaveats = function(pgClient, res, items, caveatsCallback) {
+    var itemWithCaveats = [];
+    async.eachSeries(items, function(item, items_callback){
+        var pgItemCaveatsQuery = "SELECT c.* FROM unique_items i LEFT JOIN caveats c ON i.id = c.fuid WHERE i.id='" + item.id + "'";
+        var caveats = pgClient.query(pgItemCaveatsQuery, function(err, caveatsForItem){
             if(err) {
                 res.send({error: 1, errorMsg: 'Error Receiving Area Caveats'})
-                return console.error('Error Receiving Area Caveates', err);
+                return console.error('Error Receiving Item Caveates', err);
             } else {
-                var areaCaveats = caveatsForArea.rows;
+                var itemCaveats = caveatsForItem.rows;
                  // Check to make sure there is a row and that it's not null
-                if(caveatsForArea.rowCount != 0 && caveatsForArea.rows[0].id != null) {
+                if(caveatsForItem.rowCount != 0 && caveatsForItem.rows[0].id != null) {
                     // Push Ticket into item.tickets
-                    area.caveats = areaCaveats;
+                    item.caveats = itemCaveats;
                 } else {
-                    area.caveats = [];
+                    item.caveats = [];
                 }
-                areaWithCaveats.push(area);
-                areas_callback();
+                itemWithCaveats.push(item);
+                items_callback();
             }
         });
     }, function(){
-        if(typeof caveatsCallback === "function" && areas.length === areaWithCaveats.length) {
-            caveatsCallback(areaWithCaveats);
+        if(typeof caveatsCallback === "function" && items.length === itemWithCaveats.length) {
+            caveatsCallback(itemWithCaveats);
         }
     });
 };
