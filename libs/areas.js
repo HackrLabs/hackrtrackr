@@ -2,9 +2,12 @@ var pg = require('pg'),
     async = require('async'),
     config = require('./config.js'),
     uniqueItems = require('./unique_items'),
+    tickets = require('./tickets'),
     caveats = require('./caveats'),
     redis = require('redis'),
-    response = require('./response.js');
+    response = require('./response.js'),
+    orm = require('orm');
+
 
 // Create a Redis Client
 var redisClient = redis.createClient();
@@ -21,9 +24,40 @@ redisClient.on('error', function(err){
 
 // Create PG Connection String and Client
 var pgConn = "postgres://" + config.postgres.user + ":" + config.postgres.password + "@" + config.postgres.host + "/" + config.postgres.database;
-var pgClient = new pg.Client(pgConn);
+//var pgClient = new pg.Client(pgConn);
+var db = orm.connect(pgConn);
 
+db.on("connect", function(err){
+    if(err) {
+        console.log("Could not connect to relational database");
+        return;
+    }
+});
+
+var Area = db.define('areas', 
+    { id: { type: "number" }
+    , name: { type: "text" }
+    , desc: { type: "text" }
+    , created_at: { type: "date" }
+    , updated_at: { type: "date" }
+    , photo_file_name: { type: "text" }
+    , photo_content_type: { type: "text" }
+    , photo_file_size: { type: "number" }
+    , sequence: { type: "number" }
+    },
+    { methods: 
+        {
+            getName: function(){
+                return this.name;
+            }
+        }
+    }
+);
+
+
+Area.hasMany("items", uniqueItems.Item);
 // Connect to Postgres Database
+/*
 pgClient.connect(function(err) {
     if(err) {
         err = 'Error Connecting to Relational Database';
@@ -36,6 +70,7 @@ pgClient.connect(function(err) {
         console.log('Connect to Hacker Tracker');
     }
 });
+*/
 
 /**
  * Function for Querying Postgres and Retrieving Area Data
@@ -123,7 +158,23 @@ var getById = function(req, res) {
     responseOptions.format = req.query.format || null;
     
     var id = req.route.params.id;
-    
+    Area.get(id, function(err, area){
+        if (err) throw err;
+        uniqueItems.item.find({area_id: area.id}, function(err, areaItems){
+            async.eachSeries(areaItems, function(item, itemCallback){
+                item.getTickets();
+                item.getCaveats();
+                itemCallback();
+            }, function(){ 
+                area.items = areaItems;
+                var areas = {}
+                areas.area = area;
+                var apiServiceResponse = response.createResponse(areas)
+                respondToClient(res, responseOptions, apiServiceResponse);
+            });
+        });
+    });
+    /*
     redisClient.get("areas." + id, function(err, reply){
         if(err) {
             err = 'Error Querying NoSQL Database for Area: ' + id;
@@ -146,6 +197,7 @@ var getById = function(req, res) {
             respondToClient(res, responseOptions, apiServiceResponse);
         }
     });
+    */
 }
 
 module.exports = 
