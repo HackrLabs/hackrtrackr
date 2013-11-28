@@ -11,7 +11,7 @@ var async = require('async');
 var getCaveats = function(pgClient, res, items, caveatsCallback) {
     var itemWithCaveats = [];
     async.eachSeries(items, function(item, items_callback){
-        var pgItemCaveatsQuery = "SELECT c.* FROM unique_items i LEFT JOIN caveats c ON i.id = c.fuid WHERE i.id='" + item.id + "'";
+        var pgItemCaveatsQuery = "SELECT c.* FROM items i LEFT JOIN caveats c ON i.id = c.item_id WHERE i.id='" + item.id + "'";
         var caveats = pgClient.query(pgItemCaveatsQuery, function(err, caveatsForItem){
             if(err) {
                 res.send({error: 1, errorMsg: 'Error Receiving Area Caveats'})

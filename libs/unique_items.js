@@ -14,7 +14,7 @@ var async = require('async'),
 var getUniqueItems = function(pgClient, res, areas, uniqueItemsCallback) {
     var areasWithItemsTicketsAndCaveats = [];
     async.eachSeries(areas, function(area, areas_callback){
-        var pgAreaItemsQuery = "SELECT i.* FROM areas a LEFT JOIN unique_items i ON a.id = i.area_id WHERE a.id='" + area.id + "'";
+        var pgAreaItemsQuery = "SELECT i.* FROM areas a LEFT JOIN items i ON a.id = i.area_id WHERE a.id='" + area.id + "'";
         var unique_items = pgClient.query(pgAreaItemsQuery, function(err, itemsForArea){
             if(err) {
                 res.send({error: 1, errorMsg: 'Error Receiving Items based on Area'})

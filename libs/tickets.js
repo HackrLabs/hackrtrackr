@@ -22,7 +22,7 @@ var getTickets = function(pgClient, res, itemsForArea, ticketsCallback) {
      */
     async.eachSeries(itemsForArea, function(item, item_cb) {
         // Create PG Query Statement
-        var pgAreaItemsQuery = "SELECT t.* FROM unique_items i LEFT JOIN tickets t ON t.fuid = i.id WHERE i.id='" + item.id + "'";
+        var pgAreaItemsQuery = "SELECT t.* FROM items i LEFT JOIN tickets t ON t.item_id = i.id WHERE i.id='" + item.id + "'";
         // Query PG for tickets
         var getTickets = pgClient.query(pgAreaItemsQuery, function(err, itemTickets){
             if(err) {
