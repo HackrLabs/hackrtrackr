@@ -7,6 +7,7 @@
 3. NPM
 4. ExpressJS
 5. AsyncJS
+6. Redis
 
 ### Getting Started
 1. Install Postgres
