@@ -18,11 +18,11 @@ db.on("connect", function(err){
 
 var Caveats = db.define("caveats",
     { id: "number"
-    , fuid: "number"
+    , item_id: "number"
     , user_id: "number"
     , body: "text"
     , created_at: "date"
-    , updated_ad: "date"
+    , updated_at: "date"
     }    
 );
 
