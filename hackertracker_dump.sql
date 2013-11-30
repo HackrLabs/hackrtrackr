@@ -145,7 +145,7 @@ ALTER TABLE public.cards OWNER TO hackertracker;
 
 CREATE TABLE caveats (
     id integer NOT NULL,
-    fuid integer,
+    item_id integer,
     user_id integer,
     body text,
     created_at timestamp without time zone NOT NULL,
@@ -182,7 +182,7 @@ ALTER SEQUENCE caveats_id_seq OWNED BY caveats.id;
 
 CREATE TABLE contacts (
     id integer NOT NULL,
-    fuid integer,
+    item_id integer,
     phone character varying(255),
     email character varying(255),
     name character varying(255),
@@ -247,7 +247,7 @@ ALTER TABLE public.labaccess OWNER TO hackertracker;
 
 CREATE TABLE logs (
     id integer NOT NULL,
-    fuid integer,
+    item_id integer,
     user_id integer,
     body text,
     created_at timestamp without time zone NOT NULL,
@@ -536,7 +536,7 @@ ALTER SEQUENCE suggestions_id_seq OWNED BY suggestions.id;
 
 CREATE TABLE tickets (
     id integer NOT NULL,
-    fuid integer,
+    item_id integer,
     user_id integer,
     status boolean,
     body text,
@@ -611,7 +611,7 @@ ALTER SEQUENCE tutorials_id_seq OWNED BY tutorials.id;
 -- Name: unique_items; Type: TABLE; Schema: public; Owner: hackertracker; Tablespace: 
 --
 
-CREATE TABLE unique_items (
+CREATE TABLE items (
     id integer NOT NULL,
     loggable boolean,
     ticketable boolean,
