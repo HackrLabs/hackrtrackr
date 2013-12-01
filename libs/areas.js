@@ -130,14 +130,14 @@ var findAll = function(req, res) {
                     redisClient.set("areas.all", JSON.stringify(allAreas));
                     redisClient.expire("areas.all", config.redis.expire);
                     var apiServiceResponse = response.createResponse(areas)
-                    respondToClient(res, responseOptions, apiServiceResponse);
+                    response.respondToClient(res, responseOptions, apiServiceResponse);
                 });
             })
         } else {
             var areas = {};
             areas.area = JSON.parse(reply);
             var apiServiceResponse = response.createResponse(areas);
-            respondToClient(res, responseOptions, apiServiceResponse);
+            response.respondToClient(res, responseOptions, apiServiceResponse);
         }
     });
 }
@@ -165,14 +165,14 @@ var getById = function(req, res) {
                     redisClient.set("areas." + id, JSON.stringify(area));
                     redisClient.expire("areas." + id, config.redis.expire);
                     var apiServiceResponse = response.createResponse(areas)
-                    respondToClient(res, responseOptions, apiServiceResponse);
+                    response.respondToClient(res, responseOptions, apiServiceResponse);
                 });
             });
         } else {
             var areas = {};
             areas.area = JSON.parse(reply);
             var apiServiceResponse = response.createResponse(areas);
-            respondToClient(res, responseOptions, apiServiceResponse);
+            response.respondToClient(res, responseOptions, apiServiceResponse);
         }
     });
 }
