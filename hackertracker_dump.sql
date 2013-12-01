@@ -182,7 +182,7 @@ ALTER SEQUENCE caveats_id_seq OWNED BY caveats.id;
 
 CREATE TABLE contacts (
     id integer NOT NULL,
-    item_id integer,
+    fuid integer,
     phone character varying(255),
     email character varying(255),
     name character varying(255),
@@ -230,12 +230,35 @@ CREATE TABLE emergencycontacts (
 ALTER TABLE public.emergencycontacts OWNER TO hackertracker;
 
 --
+-- Name: items; Type: TABLE; Schema: public; Owner: hackertracker; Tablespace: 
+--
+
+CREATE TABLE items (
+    id integer NOT NULL,
+    loggable boolean,
+    ticketable boolean,
+    name character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    photo_file_name character varying(255),
+    photo_content_type character varying(255),
+    photo_file_size integer,
+    photo_updated_at timestamp without time zone,
+    fuid integer,
+    area_id integer
+);
+
+
+ALTER TABLE public.items OWNER TO hackertracker;
+
+--
 -- Name: labaccess; Type: TABLE; Schema: public; Owner: hackertracker; Tablespace: 
 --
 
 CREATE TABLE labaccess (
     memberid integer,
-    logintime timestamp without time zone DEFAULT now()
+    logintime timestamp without time zone DEFAULT now(),
+    description text
 );
 
 
@@ -247,7 +270,7 @@ ALTER TABLE public.labaccess OWNER TO hackertracker;
 
 CREATE TABLE logs (
     id integer NOT NULL,
-    item_id integer,
+    fuid integer,
     user_id integer,
     body text,
     created_at timestamp without time zone NOT NULL,
@@ -608,28 +631,6 @@ ALTER SEQUENCE tutorials_id_seq OWNED BY tutorials.id;
 
 
 --
--- Name: unique_items; Type: TABLE; Schema: public; Owner: hackertracker; Tablespace: 
---
-
-CREATE TABLE items (
-    id integer NOT NULL,
-    loggable boolean,
-    ticketable boolean,
-    name character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    photo_file_name character varying(255),
-    photo_content_type character varying(255),
-    photo_file_size integer,
-    photo_updated_at timestamp without time zone,
-    fuid character varying(255),
-    area_id integer
-);
-
-
-ALTER TABLE public.unique_items OWNER TO hackertracker;
-
---
 -- Name: unique_items_id_seq; Type: SEQUENCE; Schema: public; Owner: hackertracker
 --
 
@@ -647,7 +648,7 @@ ALTER TABLE public.unique_items_id_seq OWNER TO hackertracker;
 -- Name: unique_items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: hackertracker
 --
 
-ALTER SEQUENCE unique_items_id_seq OWNED BY unique_items.id;
+ALTER SEQUENCE unique_items_id_seq OWNED BY items.id;
 
 
 --
@@ -742,6 +743,13 @@ ALTER TABLE ONLY contacts ALTER COLUMN id SET DEFAULT nextval('contacts_id_seq':
 -- Name: id; Type: DEFAULT; Schema: public; Owner: hackertracker
 --
 
+ALTER TABLE ONLY items ALTER COLUMN id SET DEFAULT nextval('unique_items_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: hackertracker
+--
+
 ALTER TABLE ONLY logs ALTER COLUMN id SET DEFAULT nextval('logs_id_seq'::regclass);
 
 
@@ -799,13 +807,6 @@ ALTER TABLE ONLY tickets ALTER COLUMN id SET DEFAULT nextval('tickets_id_seq'::r
 --
 
 ALTER TABLE ONLY tutorials ALTER COLUMN id SET DEFAULT nextval('tutorials_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: hackertracker
---
-
-ALTER TABLE ONLY unique_items ALTER COLUMN id SET DEFAULT nextval('unique_items_id_seq'::regclass);
 
 
 --
@@ -907,7 +908,7 @@ ALTER TABLE ONLY tutorials
 -- Name: unique_items_pkey; Type: CONSTRAINT; Schema: public; Owner: hackertracker; Tablespace: 
 --
 
-ALTER TABLE ONLY unique_items
+ALTER TABLE ONLY items
     ADD CONSTRAINT unique_items_pkey PRIMARY KEY (id);
 
 
@@ -923,7 +924,7 @@ ALTER TABLE ONLY users
 -- Name: index_unique_items_on_fuid; Type: INDEX; Schema: public; Owner: hackertracker; Tablespace: 
 --
 
-CREATE INDEX index_unique_items_on_fuid ON unique_items USING btree (fuid);
+CREATE INDEX index_unique_items_on_fuid ON items USING btree (fuid);
 
 
 --
