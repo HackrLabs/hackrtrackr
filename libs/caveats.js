@@ -1,6 +1,31 @@
 'use strict';
 
-var async = require('async');
+//var async = require('async');
+var orm = require('orm'),
+    config = require('./config');
+
+// Create PG Connection String and Client
+var pgConn = "postgres://" + config.postgres.user + ":" + config.postgres.password + "@" + config.postgres.host + "/" + config.postgres.database;
+//var pgClient = new pg.Client(pgConn);
+var db = orm.connect(pgConn);
+
+db.on("connect", function(err){
+    if(err) {
+        console.log("Could not connect to relational database");
+        return;
+    }
+});
+
+var Caveats = db.define("caveats",
+    { id: "number"
+    , item_id: "number"
+    , user_id: "number"
+    , body: "text"
+    , created_at: "date"
+    , updated_at: "date"
+    }    
+);
+
 /**
  * Function For Getting Unique Items in an Area
  * @function
@@ -8,7 +33,7 @@ var async = require('async');
  * @param {object} items - Areas object for getting Items
  * @param {function} callback - Callback Function
  */
-var getCaveats = function(pgClient, res, items, caveatsCallback) {
+/*var getCaveats = function(pgClient, res, items, caveatsCallback) {
     var itemWithCaveats = [];
     async.eachSeries(items, function(item, items_callback){
         var pgItemCaveatsQuery = "SELECT c.* FROM items i LEFT JOIN caveats c ON i.id = c.item_id WHERE i.id='" + item.id + "'";
@@ -35,7 +60,7 @@ var getCaveats = function(pgClient, res, items, caveatsCallback) {
         }
     });
 };
-
+*/
 module.exports = {
-    getCaveats: getCaveats
+    caveats: Caveats
 };
