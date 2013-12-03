@@ -47,7 +47,7 @@ var getAll = function(req, res) {
     responseOptions.callback = req.query.callback || '';
     responseOptions.format = req.query.format || null;
     
-    db.driver.execQuery("SELECT * FROM labaccess", function(err, access){
+    db.driver.execQuery("SELECT * FROM labaccess ORDER BY logintime DESC", function(err, access){
         if (err) throw err;
         var accessResponse = {};
         accessResponse.doorAccess = access;
@@ -64,7 +64,7 @@ var getByMemberId = function(req, res) {
     responseOptions.format = req.query.format || null;
     var id = req.route.params.id;
     
-    doorAccess.find({memberid: id}, function(err, access){
+    doorAccess.find({memberid: id}, ["logintime", "Z"], function(err, access){
         if (err) throw err;
         var accessResponse = {};
         accessResponse.doorAccess = access;
