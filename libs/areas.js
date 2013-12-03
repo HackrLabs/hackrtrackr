@@ -58,23 +58,6 @@ var Area = db.define('areas',
 Area.hasMany("items", items.Item);
 
 /**
- * A function for taking sending JSON objects to the requesting client
- * @function respondToClient
- * @param {object} res - expressJS response object
- * @param {object} options - options to decide type of response and jsonp
- * callback
- * @param {object} responseObject - Object being sent to client via res
- */
-var respondToClient = function(res, options, responseObject){
-    if(typeof options.format != "undefined" || options.format != null) {
-        res.send(responseObject);
-    } else {
-        res.send(options.callback + '(' + JSON.stringify(responseObject) + ')');
-    }
-}
-
-
-/**
  * @function getItemsTicketsAndCaveats
  * @param {object} areas - Areas
  * @param {function} callback - Callback Function
