@@ -2,12 +2,9 @@ var pg = require('pg'),
     async = require('async'),
     config = require('./config'),
     items = require('./items'),
-    tickets = require('./tickets'),
-    caveats = require('./caveats'),
     redis = require('redis'),
-    response = require('./response.js'),
-    orm = require('orm');
-
+    response = require('./response'),
+    bookshelf = require('./dbconn').DATABASE;
 
 // Create a Redis Client
 var redisClient = redis.createClient();
@@ -22,67 +19,19 @@ redisClient.on('error', function(err){
         respondToClient(res, responseOptions, errorResponse);
 })
 
-// Create PG Connection String and Client
-var pgConn = "postgres://" + config.postgres.user + ":" + config.postgres.password + "@" + config.postgres.host + "/" + config.postgres.database;
-//var pgClient = new pg.Client(pgConn);
-var db = orm.connect(pgConn);
 
-db.on("connect", function(err){
-    if(err) {
-        console.log("Could not connect to relational database");
-        return;
-    }
-});
-
-var Area = db.define('areas', 
-    { id: { type: "number" }
-    , name: { type: "text" }
-    , desc: { type: "text" }
-    , created_at: { type: "date" }
-    , updated_at: { type: "date" }
-    , photo_file_name: { type: "text" }
-    , photo_content_type: { type: "text" }
-    , photo_file_size: { type: "number" }
-    , sequence: { type: "number" }
-    },
-    { methods: 
-        {
-            getName: function(){
-                return this.name;
-            }
+var Area = bookshelf.Model.extend(
+    { tableName: 'areas'
+    , items: function(){
+            return this.hasMany(items.Item)
         }
-    }
+    }    
 );
 
-
-Area.hasMany("items", items.Item);
-
-/**
- * @function getItemsTicketsAndCaveats
- * @param {object} areas - Areas
- * @param {function} callback - Callback Function
- */
-var getItemsTicketsAndCaveats = function(area, callback) {
-    items.item.find({area_id: area.id}, function(err, areaItems){
-        async.eachSeries(areaItems, function(item, itemCallback){
-            tickets.ticket.find({item_id: item.id}, function(err, itemTickets){
-                if (err) throw err;
-                item.tickets = itemTickets || [];
-                caveats.caveats.find({item_id: item.id}, function(err, itemCaveats){
-                    if (err) throw err;
-                    item.caveats = itemCaveats || [];
-                    itemCallback();
-                });
-            });
-        }, function(){ 
-            area.items = areaItems;
-            if(typeof callback == "function") {
-                callback.call(this, area);
-            }
-        });
-    }); 
-} 
-
+var Areas = bookshelf.Collection.extend(
+    { model: Area
+    }    
+)
 /**
  * Retreives all Areas, Items and Tickets
  * @function findAll
@@ -100,22 +49,12 @@ var findAll = function(req, res) {
             var errorResponse = response.createResponse(err, true);
             respondToClient(res, responseOptions, errorResponse);
         } else if(reply === null) {
-            db.driver.execQuery("SELECT * FROM areas", function(err, allAreas){
-                if (err) throw err;
-                async.eachSeries(allAreas, function(area, areaCallback){
-                    getItemsTicketsAndCaveats(area, function(returnedArea){
-                       area = returnedArea; 
-                       areaCallback();
-                    });
-                }, function(){
-                    var areas = {};
-                    areas.area = allAreas;
-                    redisClient.set("areas.all", JSON.stringify(allAreas));
-                    redisClient.expire("areas.all", config.redis.expire);
-                    var apiServiceResponse = response.createResponse(areas)
+            new Areas()
+                .fetch({withRelated: ['items', 'items.tickets', 'items.caveats']})
+                .then(function(areas){
+                    var apiServiceResponse = response.createResponse({areas: areas})
                     response.respondToClient(res, responseOptions, apiServiceResponse);
-                });
-            })
+                })
         } else {
             var areas = {};
             areas.area = JSON.parse(reply);
@@ -140,17 +79,12 @@ var getById = function(req, res) {
             respondToClient(res, responseOptions, errorResponse);
         } else if(reply === null) {
             var id = req.route.params.id;
-            Area.get(id, function(err, area){
-                if (err) throw err;
-                getItemsTicketsAndCaveats(area, function(area){
-                    var areas = {}
-                    areas.area = area;
-                    redisClient.set("areas." + id, JSON.stringify(area));
-                    redisClient.expire("areas." + id, config.redis.expire);
-                    var apiServiceResponse = response.createResponse(areas)
+             new Area({id: id})
+                .fetch({withRelated: ['items', 'items.tickets', 'items.caveats']})
+                .then(function(area){
+                    var apiServiceResponse = response.createResponse({areas: area})
                     response.respondToClient(res, responseOptions, apiServiceResponse);
                 });
-            });
         } else {
             var areas = {};
             areas.area = JSON.parse(reply);
