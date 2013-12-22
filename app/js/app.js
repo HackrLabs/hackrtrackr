@@ -18,8 +18,8 @@ app.config(function($routeProvider){
         , templateUrl: 'partials/members/list.html'
         }
     )
-    .when('/members/add',
-        { controller: 'MembersCtrl'
+    .when('/members/new',
+        { controller: 'MembersNewCtrl'
         , templateUrl: 'partials/members/new.html'
         }
     )

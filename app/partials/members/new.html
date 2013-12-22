@@ -8,62 +8,66 @@
     <form role="form">
       <div class="form-group">
         <label for="firstName">First Name</label>
-        <input type="text" class="form-control" id="firstName" placeholder="John" />
+        <input type="text" class="form-control" id="firstName" placeholder="John" ng-model="member.firstname" />
       </div>
       <div class="form-group">
         <label for="lastName">Last Name</label>
-        <input type="text" class="form-control" id="lastName" placeholder="Smith" />
+        <input type="text" class="form-control" id="lastName" placeholder="Smith" ng-model="member.lastname" />
       </div>
       <div class="form-group">
         <label for="emailAddress">Email Address</label>
-        <input type="email" class="form-control" id="emailAddress" placeholder="John.Smith@example.com" />
+        <input type="email" class="form-control" id="emailAddress" placeholder="John.Smith@example.com" ng-model="member.email" />
       </div>
       <div class="form-group">
         <label for="phone">Phone Number</label>
-        <input type="tel" class="form-control" id="phone" placeholder="(123) 456 7890" />
+        <input type="tel" class="form-control" id="phone" placeholder="(123) 456 7890" ng-model="member.phone" />
       </div>
       <div class="form-group">
         <label for="accessTimeStart">Access Time</label>
         <div class="row">
           <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-            <input type="time" class="form-control" id="accessTimeStart" />
+            <input type="time" class="form-control" id="accessTimeStart" ng-model="member.accessStart" />
           </div>
           <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-            <input type="time" class="form-control" id="accessTimeEnd" />
+            <input type="time" class="form-control" id="accessTimeEnd" ng-model="member.accessEnd" />
           </div>
         </div>
       </div>
       <div class="form-group">
         <label for="handle">Nick Name/Handle</label>
-        <input type="text" class="form-control" id="handle" placeholder="Jonny/eaterofsouls">
+        <input type="text" class="form-control" id="handle" placeholder="Jonny/eaterofsouls" ng-model="member.handle" />
       </div>
       <div class="well">
         <h3>Access Cards</h3>
-        <table class="table">
+        <table class="table table-striped">
           <thead>
             <tr>
               <th>Card ID</th>
               <th>Card Type</th>
             </tr>
           </thead>
-          <tbody class="table-striped">
+          <tbody>
+            <tr ng-repeat="card in member.cards">
+              <td>{{ card.id }}</td>
+              <td>{{ card.type}}</td>
+            </tr>
           </tbody>
         </table>
         <form class="form-inline" role="form">
           <div class="form-group">
             <label for="card">Card Number</label>
-            <input class="form-control" type="text" id="card" placeholder="ADK458D9" /> 
+            <input class="form-control" type="text" id="card" placeholder="ADK458D9" ng-model="card.cardId" /> 
           </div>
           <div class="form-group">
             <label for="cardType">Card Type</label>
-            <select id="cardType" class="form-control">
-              <option value="{{ option.value }}" ng-repeat="{{ option in cardTypes }}"> {{ option.name }}</option>
+            <select id="cardType" class="form-control" ng-model="card.cardType">
+              <option value="{{ card.value }}" ng-repeat="card in cardTypes" > {{ card.name }}</option>
             </select>
           </div>
-          <button type="button" class="btn btn-info">Add Card</button>
+          <button type="button" class="btn btn-info" ng-click="addCard()">Add Card</button>
         </form>
       </div>
-      <button type="button" class="btn btn-primary">Submit</button>
+      <button type="button" class="btn btn-primary" ng-click="addMember()">Submit</button>
     </form>
   </div>
 </div>

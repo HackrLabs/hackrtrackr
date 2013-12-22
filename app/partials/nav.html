@@ -7,19 +7,18 @@
   </ul>
     </div>
    
-<div id="sidebar">
+<div id="sidebar" ng-controller="NavCtrl">
   <div id="search">
     <input type="text" placeholder="Search here..."/><button type="submit" class="tip-right" title="Search"><i class="fa fa-search"></i></button>
   </div>	
   <ul>
-    <li class="active"><a href="/"><i class="fa fa-home"></i> <span>Dashboard</span></a></li>
-    <li class="submenu">
-      <a href="#"><i class="fa fa-th-list"></i> <span>Members</span> <i class="arrow fa fa-chevron-right"></i></a>
+    <li ng-class="{active:isActive('/')}"><a href="/"><i class="fa fa-home"></i> <span>Dashboard</span></a></li>
+    <li class="submenu" ng-class="{active:isActive(['/members', '/members/new'])}">
+      <a href=""><i class="fa fa-th-list"></i> <span>Members</span> <i class="arrow fa fa-chevron-right"></i></a>
       <ul>
         <li><a href="/#/members/">Manage Members</a></li>
-        <li><a href="/#/members/add">Add Member</a></li>
+        <li><a href="/#/members/new">Add Member</a></li>
       </ul>
     </li>
   </ul>
-
 </div>
