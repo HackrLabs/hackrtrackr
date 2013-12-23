@@ -23,5 +23,10 @@ app.config(function($routeProvider){
         , templateUrl: 'partials/members/new.html'
         }
     )
+    .when('/members/edit/:memberid',
+        { controller: 'MembersEditCtrl'
+        , templateUrl: 'partials/members/edit.html'
+        }
+    )
     .otherwise({redirectTo: '/'});
 });

@@ -1,7 +1,7 @@
 'use strict';
 
-//var host = "http://api.hakrtracker.io";
-var host = "http://hakrtracker.dev/api";
+var host = "http://hakrtracker.dev:1234/api";
+//var host = "http://hakrtracker.dev/api";
 
 var services = angular.module('HakrTracker.services', []);
 
@@ -18,7 +18,8 @@ services.service('HakrTrackerAPI', function($http){
 
     return {
         getMembers: function(type, params){
-            return load('/members/', params)
+            type = type || '';
+            return load('/members/' + type, params)
         },
         addMember: function(data){
             return post('/members/add/', data);

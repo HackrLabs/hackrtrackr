@@ -20,8 +20,26 @@ ctrls.controller('DashboardCtrl', function($scope){
 
 });
 
-ctrls.controller('MembersListCtrl', function($scope){
+ctrls.controller('MembersListCtrl', function($scope, HakrTrackerAPI){
+    HakrTrackerAPI.getMembers().then(function(members){
+        $scope.members = members.data.response.members;
+    });
 
+    $scope.toggleActive = function(){
+        if(this.isActive == 0) {
+            this.isActive = 1
+        } else {
+            this.isActive = 0
+        }
+    }
+});
+
+ctrls.controller('MembersEditCtrl', function($scope, HakrTrackerAPI, $routeParams){
+    var memberid = $routeParams.memberid
+    HakrTrackerAPI.getMembers(memberid).then(function(members){
+        console.log(members)
+        $scope.member = members.data.response.members;
+    });
 });
 
 ctrls.controller('MembersNewCtrl', function($scope, HakrTrackerAPI){
