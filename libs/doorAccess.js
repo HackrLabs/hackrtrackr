@@ -27,7 +27,7 @@ var getAll = function(req, res) {
             accessResponse.doorAccess = access;
             redisClient.set("doorAccess.all", JSON.stringify(access));
             redisClient.expire("doorAccess.all", config.redis.expire);
-            var apiServiceResponse = response.createResponse(access)
+            var apiServiceResponse = response.createResponse({dooraccess: access})
             response.respondToClient(res, responseOptions, apiServiceResponse);
         });
 }
@@ -46,7 +46,7 @@ var getByMemberId = function(req, res) {
             accessResponse.doorAccess = access;
             redisClient.set("doorAccess." + id, JSON.stringify(access));
             redisClient.expire("doorAccess." + id, config.redis.expire);
-            var apiServiceResponse = response.createResponse(access)
+            var apiServiceResponse = response.createResponse({dooraccess: access})
             response.respondToClient(res, responseOptions, apiServiceResponse);
         })
 }

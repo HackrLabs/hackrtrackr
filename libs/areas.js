@@ -57,9 +57,8 @@ var findAll = function(req, res) {
                     response.respondToClient(res, responseOptions, apiServiceResponse);
                 })
         } else {
-            var areas = {};
-            areas.area = JSON.parse(reply);
-            var apiServiceResponse = response.createResponse(areas);
+            var areas = JSON.parse(reply);
+            var apiServiceResponse = response.createResponse({areas: areas});
             response.respondToClient(res, responseOptions, apiServiceResponse);
         }
     });
@@ -88,9 +87,8 @@ var getById = function(req, res) {
                     response.respondToClient(res, responseOptions, apiServiceResponse);
                 });
         } else {
-            var areas = {};
-            areas.area = JSON.parse(reply);
-            var apiServiceResponse = response.createResponse(areas);
+            var areas = JSON.parse(reply);
+            var apiServiceResponse = response.createResponse({areas: areas});
             response.respondToClient(res, responseOptions, apiServiceResponse);
         }
     });
