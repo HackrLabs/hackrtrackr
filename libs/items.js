@@ -1,7 +1,8 @@
 'use strict';
 var bookshelf = require('./dbconn').DATABASE,
     caveats = require('./caveats'),
-    tickets = require('./tickets');
+    tickets = require('./tickets'),
+    itemContacts = require('./itemContacts');
 
 var Item = bookshelf.Model.extend(
     { tableName: 'items'
@@ -10,6 +11,9 @@ var Item = bookshelf.Model.extend(
         }
     , caveats: function() {
             return this.hasMany(caveats.Caveat)
+        }
+    , contacts: function() {
+            return this.hasMany(itemContacts.ItemContact)
         }
     }
 ); 

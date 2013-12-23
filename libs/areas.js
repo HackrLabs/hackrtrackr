@@ -50,8 +50,9 @@ var findAll = function(req, res) {
             respondToClient(res, responseOptions, errorResponse);
         } else if(reply === null) {
             new Areas()
-                .fetch({withRelated: ['items', 'items.tickets', 'items.caveats']})
+                .fetch({withRelated: ['items', 'items.tickets', 'items.caveats', 'items.contacts']})
                 .then(function(areas){
+                    redisClient.set("areas.all", JSON.stringify(areas))
                     var apiServiceResponse = response.createResponse({areas: areas})
                     response.respondToClient(res, responseOptions, apiServiceResponse);
                 })
@@ -80,8 +81,9 @@ var getById = function(req, res) {
         } else if(reply === null) {
             var id = req.route.params.id;
              new Area({id: id})
-                .fetch({withRelated: ['items', 'items.tickets', 'items.caveats']})
+                .fetch({withRelated: ['items', 'items.tickets', 'items.caveats', 'items.contacts']})
                 .then(function(area){
+                    redisClient.set("areas." + id, JSON.stringify(area));
                     var apiServiceResponse = response.createResponse({areas: area})
                     response.respondToClient(res, responseOptions, apiServiceResponse);
                 });

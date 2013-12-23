@@ -24,7 +24,7 @@ var createResponse = function(msg, err) {
  * @param {object} responseObject - Object being sent to client via res
  */
 var respondToClient = function(res, options, responseObject){
-    if(typeof options.format != "undefined" || options.format != null) {
+    if(typeof options.format != "undefined" && options.format != null) {
         res.send(responseObject);
     } else {
         res.send(options.callback + '(' + JSON.stringify(responseObject) + ')');
