@@ -24,6 +24,11 @@ var createResponse = function(msg, err) {
  * @param {object} responseObject - Object being sent to client via res
  */
 var respondToClient = function(res, options, responseObject){
+    res.set(
+        { 'Access-Control-Allow-Credentials': true
+        , 'Access-Control-Allow-Origin': "*"
+        }
+    )
     if(typeof options.format != "undefined" && options.format != null) {
         res.send(responseObject);
     } else {
