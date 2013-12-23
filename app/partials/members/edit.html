@@ -1,8 +1,9 @@
 <div class="row">
   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <h1>Edit Member | {{ member.firstname + ' ' + member.lastname}}</h1>
+    <h1 class="pageHeader">Edit Member | {{ member.firstname + ' ' + member.lastname}} ({{ member.memberid}})</h1>
   </div>
 </div>
+<div ng-include src="'partials/breadcrumbs.html'"></div>
 <div class="row">
   <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
     <form role="form">
@@ -36,6 +37,28 @@
       <div class="form-group">
         <label for="handle">Nick Name/Handle</label>
         <input type="text" class="form-control" id="handle" placeholder="Jonny/eaterofsouls" ng-model="member.handle" />
+      </div>
+      <div class="form-group">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <label for="address">Address</label>
+            <input type="text" class="form-control" id="address" placeholder="123 Plesant St" ng-model="member.address" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            <label for="city">City</label>
+            <input type="text" name="city" id="city" placeholder="Plesant Town" ng-model="member.city" class="form-control" />
+          </div>
+          <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            <label for="State">State</label>
+            <input type="text" name="state" id="state" placeholder="Plesant State" ng-model="member.state" class="form-control" />
+          </div>
+          <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            <label for="zipcode">Zipcode</label>
+            <input type="text" name="zipcode" id="zipcode" placeholder="12345" ng-model="member.zipcode" class="form-control" />
+          </div>
+        </div>
       </div>
       <div class="well">
         <h3>Access Cards</h3>

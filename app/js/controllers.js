@@ -2,8 +2,13 @@
 
 var ctrls = angular.module('HakrTracker.controllers', 
     [ 'HakrTracker.services'
+    , 'HakrTracker.factories'
     ]
 );
+
+ctrls.controller('AppCtrl', function($scope, breadcrumbs){
+    $scope.breadcrumbs = breadcrumbs;
+});
 
 ctrls.controller('NavCtrl', function($scope, $location){
     $scope.isActive = function(route) {
@@ -34,12 +39,15 @@ ctrls.controller('MembersListCtrl', function($scope, HakrTrackerAPI){
     }
 });
 
-ctrls.controller('MembersEditCtrl', function($scope, HakrTrackerAPI, $routeParams){
+ctrls.controller('MembersEditCtrl', function($scope, HakrTrackerAPI, $routeParams, breadcrumbs){
     var memberid = $routeParams.memberid
     HakrTrackerAPI.getMembers(memberid).then(function(members){
-        console.log(members)
         $scope.member = members.data.response.members;
     });
+
+    $scope.update = function(){
+        HakrTrackerAPI.updateMember($scope.member);
+    }
 });
 
 ctrls.controller('MembersNewCtrl', function($scope, HakrTrackerAPI){
