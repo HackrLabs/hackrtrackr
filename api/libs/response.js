@@ -29,7 +29,7 @@ var respondToClient = function(res, options, responseObject){
         , 'Access-Control-Allow-Origin': "*"
         }
     )
-    if(typeof options.format != "undefined" && options.format != null) {
+    if((typeof options.format != "undefined" && options.format != null) || options.callback == '') {
         res.send(responseObject);
     } else {
         res.send(options.callback + '(' + JSON.stringify(responseObject) + ')');

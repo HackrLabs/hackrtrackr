@@ -3,6 +3,7 @@ var express = require('express');
 var areas = require('./libs/areas'),
     doorAccess = require('./libs/doorAccess'),
     members = require('./libs/members'),
+    cards = require('./libs/cards')
     config = require('./libs/config');
 
 
@@ -33,6 +34,9 @@ app.namespace(config.app.namespace, function(){
     app.get('/members', members.getAll);
     app.get('/members/:id', members.getById);
     app.post('/members/add/', members.addMember);
+    app.post('/members/update/', members.updateMember);
+    app.post('/members/cards/add', cards.addCard);
+    app.delete('/members/cards/remove', cards.removeCard);
 
 });
 app.listen(config.app.port);
