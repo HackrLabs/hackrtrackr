@@ -44,8 +44,27 @@ ctrls.controller('MembersEditCtrl', function($scope, HakrTrackerAPI, $routeParam
     HakrTrackerAPI.getMembers(memberid).then(function(members){
         $scope.member = members.data.response.members;
     });
+    /* Card Types for Adding Cards */
+    $scope.cardTypes = [];
+    $scope.cardTypes.push({name: 'NFC', value: 'nfc'});
+    $scope.cardTypes.push({name: 'RFID (HID)', value: 'rfid'});
+    
+    $scope.addCard = function(){
+        var card = {};
+        card.cardid = $scope.card.cardId;
+        card.cardtype = $scope.card.cardType;
+        card.memberid = $scope.member.memberid;
+        $scope.member.cards.push(card);
+        HakrTrackerAPI.addCard(card);
+    };
 
-    $scope.update = function(){
+    $scope.deleteCard = function(idx){
+        var delCard = $scope.member.cards[idx];
+        HakrTrackerAPI.deleteCard({id: delCard.id});
+        $scope.member.cards.splice(idx, 1);
+    }
+
+    $scope.updateMember = function(){
         HakrTrackerAPI.updateMember($scope.member);
     }
 });
@@ -65,6 +84,7 @@ ctrls.controller('MembersNewCtrl', function($scope, HakrTrackerAPI){
         card.id = $scope.card.cardId;
         card.type = $scope.card.cardType;
         $scope.member.cards.push(card);
+        HakrTrackerAPI.addCard(card);
     };
 
     $scope.addMember = function(){
