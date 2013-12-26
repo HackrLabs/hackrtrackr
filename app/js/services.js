@@ -35,9 +35,7 @@ services.service('HakrTrackerAPI', function($http){
             return post('/members/cards/add', data)
         },
         deleteCard: function(cardID) {
-            var path = '/members/cards/remove/' + cardID
-            console.log(path)
-            return del(path)
+            return del('/members/cards/remove/' + cardID)
         }
     }
 });
