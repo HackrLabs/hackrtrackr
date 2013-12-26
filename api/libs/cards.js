@@ -2,7 +2,8 @@
 
 var bookshelf = require('./dbconn').DATABASE,
 	bkshlfEvents = require('bookshelf').Events,
-	response = require('./response');
+	response = require('./response'),
+    config = require("./config");
 
 var Card = bookshelf.Model.extend(
     { tableName: 'cards'
@@ -19,28 +20,42 @@ var CardCollection = bookshelf.Collection.extend(
 );
 
 var addCard = function(req, res) {
-	Card.forge(req.body)
-		.save()
-		.then(function(){
-			console.log('Card added')
+    Card.forge()
+		.save(req.body)
+		.then(function(card){
+            console.log(card)
+            var apiServiceResponse = response.createResponse({msg: 'success', cardID: card.id})
+            response.respondToClient(res, {format: config.app.stockResponse}, apiServiceResponse);
 		})
 		.otherwise(function(err){
-			console.log('Card failed', err);
+            console.log(err)
+            var apiServiceResponse = response.createResponse({msg: 'failed', err: err.clientError}, true);
+            response.respondToClient(res, {format: config.app.stockResponse}, apiServiceResponse);
 		})
 }
 
 var removeCard = function(req, res) {
-	var card = req.body;
-	new Card()
-//		.query('where', 'id', '=', card.id)
-        .fetch({id: card.id})
+	var cardID = req.params.id;
+    console.log(cardID)
+    new Card({id: cardID})
+        .fetch()
         .then(function(card){
-            console.log(card)
-			/*
-            card.destroy().then(function(){
-				console.log('The deed is done')
-			})
-            */
+            console.log("The card, id: " + card.id)
+            card.on('destroyed', function(){
+                console.log('Card Destroyed')
+            })
+            card.on('destroying', function(something){
+                console.log('Destroying ' + something.id);
+            })
+            card
+                .destroy()
+                .then(function(){
+                    var apiServiceResponse = response.createResponse({msg: 'success'});
+                    response.respondToClient(res, {format: 'json'}, apiServiceResponse);
+                })
+                .otherwise(function(err){
+                    console.log(err)
+                })
 		});
 }
 
