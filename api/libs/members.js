@@ -47,7 +47,9 @@ var getMemberById = function(req, res) {
     new Member({memberid: id})
         .fetch({withRelated: ['cards']})
         .then(function(member){
-            var apiServiceResponse = response.createResponse({members: member});
+            var members = [];
+            members.push(member)
+            var apiServiceResponse = response.createResponse({members: members});
             response.respondToClient(res, responseOptions, apiServiceResponse);
         });  
 };
