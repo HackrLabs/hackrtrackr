@@ -34,7 +34,7 @@ var getAllMembers = function(req, res) {
     new Members()
         .fetch({withRelated: ['cards']})
         .then(function(members){
-            var apiServiceResponse = response.createResponse({members: members});
+            var apiServiceResponse = response.createResponse({members: members, count: members.length});
             response.respondToClient(res, responseOptions, apiServiceResponse);
         });  
 };

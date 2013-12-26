@@ -36,7 +36,7 @@ app.namespace(config.app.namespace, function(){
     app.post('/members/add/', members.addMember);
     app.post('/members/update/', members.updateMember);
     app.post('/members/cards/add', cards.addCard);
-    app.delete('/members/cards/remove', cards.removeCard);
+    app.del('/members/cards/remove/:id', cards.removeCard);
 
 });
 app.listen(config.app.port);
