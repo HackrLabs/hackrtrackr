@@ -15,6 +15,11 @@ app.config(function($routeProvider, $httpProvider){
         , templateUrl: 'partials/dashboard.html'
         }
     )
+    .when('/login', 
+        { controller: 'LoginCtrl'
+        , templateUrl: 'partials/login/index.html'
+        }
+    )
     .when('/members',
         { controller: 'MembersListCtrl'
         , templateUrl: 'partials/members/list.html'
@@ -32,3 +37,5 @@ app.config(function($routeProvider, $httpProvider){
     )
     .otherwise({redirectTo: '/'});
 });
+
+angular.module('myApp', ['angular.css.injector']);

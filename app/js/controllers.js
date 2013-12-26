@@ -3,6 +3,7 @@
 var ctrls = angular.module('HakrTracker.controllers', 
     [ 'HakrTracker.services'
     , 'HakrTracker.factories'
+    , 'angular.css.injector'
     ]
 );
 
@@ -95,6 +96,6 @@ ctrls.controller('MembersNewCtrl', function($scope, HakrTrackerAPI){
     }
 })
 
-ctrls.controller('LoginCtrl' , function($scope, HakrTrackerAPI){
-
+ctrls.controller('LoginCtrl' , function($scope, HakrTrackerAPI, cssInjector){
+    cssInjector.add("/css/unicorn-login.css");
 });

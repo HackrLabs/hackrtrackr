@@ -8,18 +8,7 @@ body {
   width: 100%;
   height: 100%;
 }
-body {
-  background-color: #444444;
-  background-image: -webkit-gradient(linear, left 0%, left 100%, from(#555555), to(#111111));
-  background-image: -webkit-linear-gradient(top, #555555, 0%, #111111, 100%);
-  background-image: -moz-linear-gradient(top, #555555 0%, #111111 100%);
-  background-image: linear-gradient(to bottom, #555555 0%, #111111 100%);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff555555', endColorstr='#ff111111', GradientType=0);
-  background-attachment: fixed;
-  padding: 0;
-  margin: 0;
-}
+
 a.grey {
   color: #aaaaaa;
 }

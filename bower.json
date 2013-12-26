@@ -25,6 +25,7 @@
     "bootstrap": "~3.0.3",
     "jquery": "~2.0.3",
     "angular-route": "~1.2.5",
-    "d3": "~3.3.13"
+    "d3": "~3.3.13",
+    "angular-css-injector": "https://github.com/Yappli/angular-css-injector.git#1.0.1"
   }
 }
