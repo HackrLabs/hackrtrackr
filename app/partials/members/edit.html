@@ -74,7 +74,7 @@
             <tr ng-repeat="card in member.cards">
               <td>{{ card.cardid }}</td>
               <td>{{ card.cardtype }}</td> 
-              <td><button ng-click="deleteCard($index)" class="btn btn-error">X</button></td>
+              <td><button ng-click="deleteCard(card.id, $index)" class="btn btn-error">X</button></td>
             </tr>
           </tbody>
         </table>

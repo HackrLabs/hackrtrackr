@@ -48,20 +48,31 @@ ctrls.controller('MembersEditCtrl', function($scope, HakrTrackerAPI, $routeParam
     $scope.cardTypes = [];
     $scope.cardTypes.push({name: 'NFC', value: 'nfc'});
     $scope.cardTypes.push({name: 'RFID (HID)', value: 'rfid'});
-    
+   
     $scope.addCard = function(){
         var card = {};
         card.cardid = $scope.card.cardId;
         card.cardtype = $scope.card.cardType;
         card.memberid = $scope.member.memberid;
-        $scope.member.cards.push(card);
-        HakrTrackerAPI.addCard(card);
+        HakrTrackerAPI.addCard(card).then(function(res){
+            var response = res.data;
+            if(response.error != true) {
+                console.log(response);
+                card.id = response.response.cardID;
+                $scope.member.cards.push(card);
+                console.log($scope.member.cards);
+            } else {
+                console.log(response);
+            }
+        });
     };
 
-    $scope.deleteCard = function(idx){
-        var delCard = $scope.member.cards[idx];
-        HakrTrackerAPI.deleteCard({id: delCard.id});
-        $scope.member.cards.splice(idx, 1);
+    $scope.deleteCard = function(cardID, idx) {
+        console.log('cardid: ' + cardID + ', index: ' + idx)
+        HakrTrackerAPI.deleteCard(cardID).then(function(res){
+            var response = res.data
+            $scope.member.cards.splice(idx, 1);
+        });
     }
 
     $scope.updateMember = function(){
@@ -81,10 +92,17 @@ ctrls.controller('MembersNewCtrl', function($scope, HakrTrackerAPI){
     $scope.member.cards = [];
     $scope.addCard = function(){
         var card = {};
-        card.id = $scope.card.cardId;
+        card.cardid = $scope.card.cardId;
         card.type = $scope.card.cardType;
-        $scope.member.cards.push(card);
-        HakrTrackerAPI.addCard(card);
+        HakrTrackerAPI.addCard(card).then(function(response){
+            if(response.error != true) {
+                card.id = response.response.cardID;
+                $scope.member.cards.push(card);
+                console.log($scope.member.cards)
+            } else {
+                console.log(response)
+            }
+        });
     };
 
     $scope.addMember = function(){
