@@ -60,10 +60,9 @@ ctrls.controller('MembersEditCtrl', function($scope, HakrTrackerAPI, $routeParam
         HakrTrackerAPI.addCard(card).then(function(res){
             var response = res.data;
             if(response.error != true) {
-                console.log(response);
                 card.id = response.response.cardID;
                 $scope.member.cards.push(card);
-                console.log($scope.member.cards);
+                $scope.card = '';
             } else {
                 console.log(response);
             }
