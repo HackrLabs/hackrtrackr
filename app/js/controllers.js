@@ -42,7 +42,7 @@ ctrls.controller('MembersListCtrl', function($scope, HakrTrackerAPI){
 ctrls.controller('MembersEditCtrl', function($scope, HakrTrackerAPI, $routeParams, breadcrumbs){
     var memberid = $routeParams.memberid
     HakrTrackerAPI.getMembers(memberid).then(function(members){
-        $scope.member = members.data.response.members;
+        $scope.member = members.data.response.members[0];
     });
     /* Card Types for Adding Cards */
     $scope.cardTypes = [];
