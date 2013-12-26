@@ -16,9 +16,8 @@ services.service('HakrTrackerAPI', function($http){
         var config =  {}
         return $http.post(host + path, params, config);
     }
-    function del(path, params) {
-        params = params || {}
-        return $http.delete(host + path, params);
+    function del(path) {
+        return $http.delete(host + path);
     }
 
     return {
@@ -27,7 +26,7 @@ services.service('HakrTrackerAPI', function($http){
             return load('/members/' + type, params)
         },
         addMember: function(data){
-            return post('/members/add/', data);
+            return post('/members/add/', data)
         },
         updateMember: function(data){
             return post('/members/update/', data)
@@ -35,8 +34,10 @@ services.service('HakrTrackerAPI', function($http){
         addCard: function(data) {
             return post('/members/cards/add', data)
         },
-        deleteCard: function(data) {
-            return del('/members/cards/remove', data);
+        deleteCard: function(cardID) {
+            var path = '/members/cards/remove/' + cardID
+            console.log(path)
+            return del(path)
         }
     }
 });
