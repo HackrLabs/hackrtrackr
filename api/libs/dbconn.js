@@ -14,4 +14,4 @@ bookshelf.DATABASE = bookshelf.initialize(
     }    
 );
 
-module.exports = bookshelf
+module.exports = bookshelf;

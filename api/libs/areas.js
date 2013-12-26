@@ -82,12 +82,16 @@ var getById = function(req, res) {
              new Area({id: id})
                 .fetch({withRelated: ['items', 'items.tickets', 'items.caveats', 'items.contacts']})
                 .then(function(area){
+                    var areas = [];
+                    areas.push(area);
                     redisClient.set("areas." + id, JSON.stringify(area));
-                    var apiServiceResponse = response.createResponse({areas: area})
+                    var apiServiceResponse = response.createResponse({areas: areas})
                     response.respondToClient(res, responseOptions, apiServiceResponse);
                 });
         } else {
-            var areas = JSON.parse(reply);
+            var area = JSON.parse(reply);
+            var areas = [];
+            areas.push(area)
             var apiServiceResponse = response.createResponse({areas: areas});
             response.respondToClient(res, responseOptions, apiServiceResponse);
         }
@@ -97,4 +101,6 @@ var getById = function(req, res) {
 module.exports = 
     { findAll: findAll
     , getById: getById
+    , Area: Area
+    , Areas: Areas
     };
