@@ -21,8 +21,11 @@ ctrls.controller('NavCtrl', function($scope, $location){
     }
 });
 
-ctrls.controller('DashboardCtrl', function($scope){
-
+ctrls.controller('DashboardCtrl', function($scope, HakrTrackerAPI){
+    HakrTrackerAPI.getMembers().then(function(members){
+        console.log(members)
+        $scope.memberCount = members.data.response.count;
+    })
 });
 
 ctrls.controller('MembersListCtrl', function($scope, HakrTrackerAPI){
@@ -109,3 +112,7 @@ ctrls.controller('MembersNewCtrl', function($scope, HakrTrackerAPI){
         HakrTrackerAPI.addMember($scope.member);
     }
 })
+
+ctrls.controller('LoginCtrl' , function($scope, HakrTrackerAPI){
+
+});
