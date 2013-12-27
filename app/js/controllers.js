@@ -22,11 +22,12 @@ ctrls.controller('NavCtrl', function($scope, $location){
     }
 });
 
-ctrls.controller('DashboardCtrl', function($scope, HakrTrackerAPI){
+ctrls.controller('DashboardCtrl', function($scope, HakrTrackerAPI, cssInjector){
     HakrTrackerAPI.getMembers().then(function(members){
         console.log(members)
         $scope.memberCount = members.data.response.count;
     })
+    cssInjector.add('/css/dash.css');
 });
 
 ctrls.controller('MembersListCtrl', function($scope, HakrTrackerAPI){
