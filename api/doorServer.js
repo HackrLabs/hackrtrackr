@@ -1,9 +1,9 @@
 var serialport = require('serialport'),
     serial = serialport.SerialPort,
     pg = require('pg'),
-    config = require('./libs/config.js');
+    config = require('./libs/config');
 
-var sp = new serial("/dev/ttyUSB0", 
+var sp = new serial("/dev/ttyACM0", 
 { baudrate: 57600
 , parser: serialport.parsers.readline("\n")
 , buffersize: 100
@@ -106,6 +106,7 @@ sp.on("open", function(){
     console.log("open");
     sp.on('data', function(data){
         clearData();
+        console.log("Reading data....")
         var dataStringBuf = new String(data);
         if(dataStringBuf.indexOf("@") == 1) {
             readData = dataStringBuf;
@@ -114,9 +115,11 @@ sp.on("open", function(){
        	} else {
             readData += dataStringBuf;
         }
+        console.log(readData);
         
 	// If the full buffer is set check the database.
-	if(readData.indexOf("?") != -1) {
+	if(readData.indexOf("*") != -1) {
+            console.log('Parsing Data....')
             var cardInfo = getCardCode(readData);
             var card = cardInfo.card;
             var siteCode = card.substr(0,2);

@@ -35,6 +35,7 @@ app.namespace(config.app.namespace, function(){
     app.get('/members/:id', members.getById);
     app.post('/members/add/', members.addMember);
     app.post('/members/update/', members.updateMember);
+    app.post('/members/toggleEnabled/:memberid', members.toggleEnabled);
     app.post('/members/cards/add', cards.addCard);
     app.del('/members/cards/remove/:id', cards.removeCard);
 
