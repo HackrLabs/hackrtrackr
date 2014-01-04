@@ -1,0 +1,23 @@
+<div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <form role="form">
+      <div class="form-group">
+        <input type="text" ng-model="timesheet.username" class="form-control" />
+      </div>
+      <div class="form-group">
+        <input type="text" ng-model="timesheet.pin" class="form-control" />
+      </div>
+      <div class="form-group"> 
+        <label class="radio-inline">
+          <input type="radio" name="clockStatus" ng-model="timesheet.clockStatus" value="1" /> Clock In
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="clockStatus" ng-model="timesheet.clockStatus" value="0" /> Clock Out
+        </label>
+      </div>
+      <div class="form-group">
+        <button type="button" ng-click="addTime()">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
