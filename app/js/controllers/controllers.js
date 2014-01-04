@@ -7,11 +7,17 @@ var ctrls = angular.module('HakrTracker.controllers',
     ]
 );
 
-ctrls.controller('AppCtrl', function($scope, breadcrumbs){
+ctrls.controller('AppCtrl', function($scope, breadcrumbs, $routeParams){
+    $scope.merchant = $routeParams.merchant;
     $scope.breadcrumbs = breadcrumbs;
 });
 
 ctrls.controller('NavCtrl', function($scope, $location){
+    var path = $location.path();
+    path = path.substring(1);
+    var pathArray = path.split('/');
+    $scope.merchant = pathArray[0];
+    console.log($scope.merchant)
     $scope.isActive = function(route) {
         if (typeof route == "string") {
             return route === $location.path() ? true : false
@@ -22,8 +28,9 @@ ctrls.controller('NavCtrl', function($scope, $location){
     }
 });
 
-ctrls.controller('DashboardCtrl', function($scope, HakrTrackerAPI){
-    HakrTrackerAPI.getMembers().then(function(members){
+ctrls.controller('DashboardCtrl', function($scope, HakrTrackerAPI, $routeParams){
+    var merchant = $routeParams.merchant;
+    HakrTrackerAPI.getMembers({merchant: merchant}).then(function(members){
         console.log(members)
         $scope.memberCount = members.data.response.count;
     })
@@ -34,12 +41,11 @@ ctrls.controller('MembersListCtrl', function($scope, HakrTrackerAPI){
         $scope.members = members.data.response.members;
     });
 
-    $scope.toggleActive = function(){
-        if(this.isActive == 0) {
-            this.isActive = 1
-        } else {
-            this.isActive = 0
-        }
+    $scope.toggleActive = function(memberID, idx){
+        HakrTrackerAPI.toggleMemberActivity(memberID).then(function(res){
+            var response = res.data.response;
+            $scope.members[idx] = response.members;
+        })    
     }
 });
 
@@ -113,6 +119,13 @@ ctrls.controller('MembersNewCtrl', function($scope, HakrTrackerAPI){
     }
 })
 
+ctrls.controller('EmployeesCtrl', function($scope, HakrTrackerAPI){
+
+});
+
+ctrls.controller('EmployeesTimeCtrl', function($scope, HakrTrackerAPI){
+
+});
 ctrls.controller('LoginCtrl' , function($scope, HakrTrackerAPI, cssInjector){
     cssInjector.add("/css/unicorn-login.css");
 });

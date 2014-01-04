@@ -21,15 +21,20 @@ services.service('HakrTrackerAPI', function($http){
     }
 
     return {
-        getMembers: function(type, params){
-            type = type || '';
-            return load('/members/' + type, params)
+        getMembers: function(params){
+            return load('/members/', params)
         },
         addMember: function(data){
             return post('/members/add/', data)
         },
         updateMember: function(data){
             return post('/members/update/', data)
+        },
+        deleteMember: function(memberID) {
+            return del('/members/remove/' + memberID)
+        },
+        toggleMemberActivity: function(memberID) {
+            return post('/members/toggleEnabled/' + memberID)
         },
         addCard: function(data) {
             return post('/members/cards/add', data)
