@@ -28,8 +28,8 @@
         <td class="hidden-xs hidden-sm">{{ member.memberlevel }}</td>
         <td class="hidden-xs hidden-sm">
           <a href="#/members/edit/{{ member.memberid }}" class="btn btn-primary">Edit</a> 
-          <button ng-click="delete()" class="btn btn-danger">Delete</button> 
-          <button class="btn {{ member.isActive != 1 ? 'btn-warning' : 'btn-success'}}" ng-click="toggleActive()">
+          <button ng-click="delete(member.memberid, $index)" class="btn btn-danger">Delete</button> 
+          <button class="btn {{ member.isActive != 1 ? 'btn-warning' : 'btn-success'}}" ng-click="toggleActive(member.memberid, $index)">
             {{ member.isActive != 1 ? 'Deactivate' : 'Activate'}}
           </button>
         </td>
@@ -42,8 +42,8 @@
             </button>
             <ul class="dropdown-menu" role="menu">
               <li><a href="#/members/edit/{{ member.memberid }}">Edit</a></li>
-              <li><a ng-click="delete()">Delete</a></li>
-              <li><a ng-click="toggleActive()">{{ member.isActive != 1 ? 'Deactivate' : 'Activate'}}</a></li>
+              <li><a ng-click="delete(member.memberid, $index)">Delete</a></li>
+              <li><a ng-click="toggleActive(member.memberid, $index)">{{ member.isActive != 1 ? 'Deactivate' : 'Activate'}}</a></li>
             </ul>
           </div>
         </td>
