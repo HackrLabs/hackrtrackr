@@ -4,7 +4,8 @@ var areas = require('./libs/areas'),
     doorAccess = require('./libs/doorAccess'),
     members = require('./libs/members'),
     cards = require('./libs/cards')
-    config = require('./libs/config');
+    config = require('./libs/config'),
+    master = require('./libs/master');
 
 
 var allowCrossDomain = function(req, res, next) {
@@ -19,10 +20,18 @@ var allowCrossDomain = function(req, res, next) {
         next();
     }
 };
+
+var checkMerchant = function(req, res, next) {
+  var merchant = req.params.merchant
+  master.checkMerchantExistance(merchant, function(response){
+    next();
+  })
+}
+
 var app = express();
-app.set('domain', config.app.domain);
 app.use(express.bodyParser());
 app.use(allowCrossDomain);
+app.all('*', checkSubDomain);
 app.namespace(config.app.namespace, function(){
     app.get('/', function(req, res) {
         res.send('This page is not active');

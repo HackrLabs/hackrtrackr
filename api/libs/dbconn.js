@@ -3,15 +3,18 @@
 var config = require('./config'),
     bookshelf = require('bookshelf');
 
-bookshelf.DATABASE = bookshelf.initialize(
-    { client: 'postgres'
-    , connection:
-        { host: config.postgres.host
-        , user: config.postgres.user
-        , password: config.postgres.password
-        , database: config.postgres.database
-        }
-    }    
-);
+var setClient = function(clientInfo){
+  bookshelf.DATABASE = bookshelf.initialize(
+    { client: clientInfo.client
+    , connection: clientInfo.connection
+    }
+  );
+};
+
+bookshelf.MASTER = bookshelf.initialize(
+  { client: config.master.client
+  , connection: config.master.connection
+  }
+)
 
 module.exports = bookshelf;

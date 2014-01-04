@@ -2,3 +2,4 @@ node_modules/*
 api/libs/config.js
 app/libs/*
 **.sw*
+**.db
