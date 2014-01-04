@@ -1,3 +1,7 @@
 #dashLinks .glyphicon {
 	font-size: 18pt;
+	color:#333333 ;
+}
+#dashLinks .glyphicon:hover {
+	color: grey;
 }
