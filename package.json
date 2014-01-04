@@ -14,7 +14,8 @@
     "bookshelf": "0.6.2",
     "underscore": "1.5.2",
     "when": "2.7.0",
-    "bluebird": "0.11.5-1"
+    "bluebird": "0.11.5-1",
+    "sqlite3": "~2.1.19"
   },
   "devDependencies": {},
   "scripts": {

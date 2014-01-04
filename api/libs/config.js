@@ -1,17 +1,20 @@
-'use strict';
+  'use strict';
 
-var config = 
+var config =
 { app:
     { domain: 'hakrtracker.dev'
-    , port: 1234
+    , port:  7089
     , namespace: '/api'
     , stockResponse: 'json'
     }
-, postgres:
-    { user: 'hackertracker'
-    , password: 'hackallthethings'
-    , host: 'localhost'
-    , database: 'hackertracker'
+, master:
+  { client: 'sqlite3'
+  , connection:
+    { filename: __dirname + "database/master.db"
+    }
+  }
+, sqlite3:
+    { dbpath: __dirname + "/database/gadgetcat.db"
     }
 , redis:
     { expire: 120
