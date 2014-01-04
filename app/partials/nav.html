@@ -3,7 +3,7 @@
       <li class="btn" ><a title="" href="#"><i class="fa fa-user"></i> <span class="text">Profile</span></a></li>
       </li>
       <li class="btn"><a title="" href="#"><i class="fa fa-cog"></i> <span class="text">Settings</span></a></li>
-      <li class="btn"><a title="" href="#/login"><i class="fa fa-share"></i> <span class="text">Logout</span></a></li>
+      <li class="btn"><a title="" href="/login"><i class="fa fa-share"></i> <span class="text">Logout</span></a></li>
   </ul>
     </div>
    
@@ -12,12 +12,19 @@
     <input type="text" placeholder="Search here..."/><button type="submit" class="tip-right" title="Search"><i class="fa fa-search"></i></button>
   </div>	
   <ul>
-    <li ng-class="{active:isActive('/')}"><a href="/"><i class="fa fa-home"></i> <span>Dashboard</span></a></li>
-    <li class="submenu" ng-class="{active:isActive(['/members', '/members/new'])}">
-      <a href=""><i class="fa fa-th-list"></i> <span>Members</span> <i class="arrow fa fa-chevron-right"></i></a>
+    <li ng-class="{active:isActive('/{{merchant}}')}"><a href="/{{merchant}}/"><i class="fa fa-home"></i> <span>Dashboard</span></a></li>
+    <li class="submenu" ng-class="{active:isActive(['/{{ merchant }}/members', '/{{ merchant }}/members/new'])}">
+      <a href=""><i class="fa fa-group"></i> <span>Members</span> <i class="arrow fa fa-chevron-right"></i></a>
       <ul>
-        <li><a href="/#/members/">Manage Members</a></li>
-        <li><a href="/#/members/new">Add Member</a></li>
+        <li><a href="/{{ merchant }}/members/">Manage Members</a></li>
+        <li><a href="/{{ merchant }}/members/new"><span class="fa fa-user"></span> Add Member</a></li>
+      </ul>
+    </li>
+    <li class="submenu" ng-class="{active:isActive(['/{{ merchant }}/employee', '/{{ merchant }}/employee/timesheet'])}">
+      <a href=""><i class="fa fa-group"></i> <span>Employees</span> <i class="arrow fa fa-chevron-right"></i></a>
+      <ul>
+        <li><a href="/{{ merchant }}/employees/">Manage Employees</a></li>
+        <li><a href="/{{ merchant }}/employees/timesheet">Timesheets (Web Clock)</a></li>
       </ul>
     </li>
   </ul>
