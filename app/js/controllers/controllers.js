@@ -28,7 +28,6 @@ ctrls.controller('NavCtrl', function($scope, $location){
     }
 });
 
-<<<<<<< HEAD:app/js/controllers/controllers.js
 ctrls.controller('DashboardCtrl', function($scope, HakrTrackerAPI, $routeParams){
     var merchant = $routeParams.merchant;
     HakrTrackerAPI.getMembers({merchant: merchant}).then(function(members){

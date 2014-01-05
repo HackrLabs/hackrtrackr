@@ -19,7 +19,7 @@ redisClient.on('error', function(err){
         respondToClient(res, responseOptions, errorResponse);
 })
 
-
+if(typeof bookshelf != "undefined") {
 var Area = bookshelf.Model.extend(
     { tableName: 'areas'
     , items: function(){
@@ -32,6 +32,7 @@ var Areas = bookshelf.Collection.extend(
     { model: Area
     }    
 )
+}
 /**
  * Retreives all Areas, Items and Tickets
  * @function findAll

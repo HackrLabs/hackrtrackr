@@ -1,11 +1,13 @@
 var express = require('express');
     require('express-namespace');
-var areas = require('./libs/areas'),
+var config = require('./libs/config'),
+    master = require('./libs/master')
+    areas = require('./libs/areas'),
     doorAccess = require('./libs/doorAccess'),
     members = require('./libs/members'),
-    cards = require('./libs/cards')
-    config = require('./libs/config'),
-    master = require('./libs/master');
+    cards = require('./libs/cards'),
+    http = require('http'),
+    sockjs = require('sockjs')
 
 
 var allowCrossDomain = function(req, res, next) {
@@ -21,17 +23,61 @@ var allowCrossDomain = function(req, res, next) {
     }
 };
 
-var checkMerchant = function(req, res, next) {
-  var merchant = req.params.merchant
-  master.checkMerchantExistance(merchant, function(response){
-    next();
-  })
+var checkMerchant = function(merchant) {
+    console.log('Checking Merchant')
+    console.log('Merchant is: ' + merchant)
+    master.checkMerchantExistance(merchant, function(response){
+        return response
+    })
+}
+/*
+var sockjs_opts = {sockjs_url: "http://cdn.sockjs.org/sockjs-0.3.min.js"};
+
+var sockjs = sockjs.createServer(sockjs_opts);
+var sockets = {};
+sockjs.on('connection', function(conn) {
+    sockets[conn.id] = conn;
+    console.log('Current Sockets: ' + sockets.length)
+    
+    conn.on('data', function(message) {
+        console.log(message)
+        router(JSON.parse(message), conn);
+    });
+
+    conn.on('close', function(){
+        console.log('Connection closed');
+        delete sockets[conn.id]
+        console.log('Sockets Remaining: ' + sockets.length)
+    })
+});
+
+var send = function(data, conn) {
+    console.log('Attempting to send')
+    conn.write(JSON.stringify(data));
 }
 
+var router = function(data, conn) {
+    console.log(data)
+    var route = data.prefix;
+    console.log('route: ' + route)
+
+    switch(route) {
+        case 'getMerchantInfo':
+            var merchantFound = checkMerchant(data.data)
+            send(merchantFound, conn)
+            break;
+        case 'getAllMembers':
+            var merchant = data.data.merchant
+            var allMembers = members.getAll(merchant)
+            send(JSON.stringify(allMembers), conn)
+    }
+}
+*/
 var app = express();
-app.use(express.bodyParser());
+//var server = http.createServer(app);
+//sockjs.installHandlers(server, {prefix:'/api'});
 app.use(allowCrossDomain);
-app.all('*', checkSubDomain);
+//app.all('*', checkMerchant);
 app.namespace(config.app.namespace, function(){
     app.get('/', function(req, res) {
         res.send('This page is not active');
@@ -49,5 +95,6 @@ app.namespace(config.app.namespace, function(){
     app.del('/members/cards/remove/:id', cards.removeCard);
 
 });
-app.listen(config.app.port);
+app.listen(config.app.port)
+//server.listen(config.app.port);
 console.log('Listening on port ' + config.app.port);

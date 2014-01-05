@@ -1,42 +1,58 @@
 'use strict';
 
-var bookshelf = require('./dbconn').DATABASE,
+var bookshelf,
     config = require('./config'),
     redis = require('redis'),
     response = require('./response'),
     cards = require('./cards'),
-    _ = require('underscore'),
-    when = require('when'),
-    Promise = require('bluebird');
-
+    master = require('./master')
 // Create a Redis Client
 var redisClient = redis.createClient();
+var Member, Members;
 
-var Member = bookshelf.Model.extend(
-    { tableName: 'members'
-    , idAttribute: 'memberid'
-    , cards: function(){
-            return this.hasMany(cards.Card, 'memberid')
+var initializeModels = function(merchant, callback){
+    master.checkMerchantExistance(merchant, function(connection){
+        connection.couldNotFind = connection.couldNotFind || false
+
+        if(!connection.couldNotFind) {
+            bookshelf = connection
+            Member = bookshelf.Model.extend(
+                { tableName: 'members'
+                , idAttribute: 'memberid'
+                , cards: function(){
+                        return this.hasMany(cards.Card, 'memberid')
+                    }
+                }
+            );
+
+            Members = bookshelf.Collection.extend(
+                { model: Member
+                }
+            )
         }
-    }
-);
-
-var Members = bookshelf.Collection.extend(
-    { model: Member
-    }
-)
-
+        if(typeof callback == "function") {
+            callback.call(this, bookshelf.couldNotFind)
+        }
+    })
+}
 var getAllMembers = function(req, res) {
-    var responseOptions = {};
-    responseOptions.callback = req.query.callback || '';
-    responseOptions.format = req.query.format || null;
-    var id = req.route.params.id;
-    new Members()
-        .fetch({withRelated: ['cards']})
-        .then(function(members){
-            var apiServiceResponse = response.createResponse({members: members, count: members.length});
-            response.respondToClient(res, responseOptions, apiServiceResponse);
-        });  
+    var merchant = req.query.merchant
+    initializeModels(merchant, function(err){
+        if (err) { res.send('fuck there is an error')}
+        var responseOptions = {};
+        responseOptions.callback = req.query.callback || '';
+        responseOptions.format = req.query.format || null;
+        var id = req.route.params.id;
+        new Members()
+            .fetch()
+            .then(function(members){
+                var apiServiceResponse = response.createResponse({members: members, count: members.length});
+                response.respondToClient(res, responseOptions, apiServiceResponse);
+            })
+            .otherwise(function(err){
+                console.error(err)
+            })
+    });
 };
 
 var getMemberById = function(req, res) {

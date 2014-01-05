@@ -4,7 +4,6 @@ var bookshelf = require('./dbconn').DATABASE,
 	bkshlfEvents = require('bookshelf').Events,
 	response = require('./response'),
     config = require("./config");
-
 var Card = bookshelf.Model.extend(
     { tableName: 'cards'
     , idAttribute: 'id'

@@ -5,7 +5,7 @@ var response = require('./response'),
     
 // Create a Redis Client
 var redisClient = redis.createClient();
-
+if(typeof bookshelf != "undefined") {
 var DoorAccess = bookshelf.Model.extend(
     { tableName: 'labaccess'
     }
@@ -15,6 +15,7 @@ var DoorAccessCollection = bookshelf.Collection.extend(
     { model: DoorAccess
     }
 )
+}
 
 var getAll = function(req, res) {
     var responseOptions = {};

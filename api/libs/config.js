@@ -10,12 +10,9 @@ var config =
 , master:
   { client: 'sqlite3'
   , connection:
-    { filename: __dirname + "database/master.db"
+    { filename: __dirname + "/database/master.db"
     }
   }
-, sqlite3:
-    { dbpath: __dirname + "/database/gadgetcat.db"
-    }
 , redis:
     { expire: 120
     }

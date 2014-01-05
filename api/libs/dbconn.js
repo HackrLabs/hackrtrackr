@@ -4,7 +4,7 @@ var config = require('./config'),
     bookshelf = require('bookshelf');
 
 var setClient = function(clientInfo){
-  bookshelf.DATABASE = bookshelf.initialize(
+  return bookshelf.initialize(
     { client: clientInfo.client
     , connection: clientInfo.connection
     }
@@ -17,4 +17,8 @@ bookshelf.MASTER = bookshelf.initialize(
   }
 )
 
-module.exports = bookshelf;
+module.exports = 
+{ MASTER: bookshelf.MASTER
+, DATABASE: bookshelf.DATABASE
+, setClient: setClient
+};

@@ -1,5 +1,5 @@
 CREATE TABLE owners (
-  id INTEGER PRIMARY KEY AUTOINCREMEMT,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   firstName varchar(50),
   lastName varchar(50),
   username varchar(50),

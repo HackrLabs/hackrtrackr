@@ -3,7 +3,7 @@ var bookshelf = require('./dbconn').DATABASE,
     caveats = require('./caveats'),
     tickets = require('./tickets'),
     itemContacts = require('./itemContacts');
-
+if(typeof bookshelf != "undefined") {
 var Item = bookshelf.Model.extend(
     { tableName: 'items'
     , tickets: function(){
@@ -17,6 +17,7 @@ var Item = bookshelf.Model.extend(
         }
     }
 ); 
+}
 
 module.exports = {
     Item: Item
