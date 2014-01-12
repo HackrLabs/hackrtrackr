@@ -1,15 +1,31 @@
 'use strict';
 
-var config = {};
-config.postgres = {};
-config.redis = {};
+/*
+ * For database. Bookshelf JS is used
+ * Please check booshelfJS documentation for other database
+ * connection information
+ */
 
-config.postgres.user = 'user';
-config.postgres.password = 'password';
-config.postgres.host = 'localhost';
-config.postgres.database = 'database';
-
-config.redis.expire = 120;
+var config =
+{ app:
+    { domain: ''
+    , port: 1111
+    , namespace: '/api'
+    , stockResponse: 'json'
+    }
+, database:
+		{ client: 'postgres'
+		, connection:
+			{ user: 'hackertracker'
+			, password: 'hackertracker'
+			, host: 'localhost'
+			, database: 'hackertracker'
+			}
+		}
+, redis:
+    { expire: 120
+    }
+};
 
 module.exports = config;
 
