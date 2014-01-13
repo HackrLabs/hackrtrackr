@@ -4,10 +4,7 @@ var bookshelf = require('./dbconn').DATABASE,
     config = require('./config'),
     redis = require('redis'),
     response = require('./response'),
-    cards = require('./cards'),
-    _ = require('underscore'),
-    when = require('when'),
-    Promise = require('bluebird');
+    cards = require('./cards');
 
 // Create a Redis Client
 var redisClient = redis.createClient();
@@ -16,8 +13,8 @@ var Member = bookshelf.Model.extend(
     { tableName: 'members'
     , idAttribute: 'memberid'
     , cards: function(){
-            return this.hasMany(cards.Card, 'memberid')
-        }
+				return this.hasMany(cards.Card, 'memberid')
+			}
     }
 );
 
@@ -36,7 +33,7 @@ var getAllMembers = function(req, res) {
         .then(function(members){
             var apiServiceResponse = response.createResponse({members: members, count: members.length});
             response.respondToClient(res, responseOptions, apiServiceResponse);
-        });  
+        });
 };
 
 var getMemberById = function(req, res) {
@@ -51,14 +48,14 @@ var getMemberById = function(req, res) {
             members.push(member)
             var apiServiceResponse = response.createResponse({members: members});
             response.respondToClient(res, responseOptions, apiServiceResponse);
-        });  
+        });
 };
 
 var addMember = function(req, res) {
     var responseOptions = {};
     responseOptions.callback = req.query.callback || '';
     responseOptions.format = req.query.format || null;
-    
+
     var memberData = req.body;
     var memberID = memberData.memberid;
     var memberCards = memberData.cards;
@@ -68,9 +65,7 @@ var addMember = function(req, res) {
         .save(memberData, {patch: true})
         .then(function(member){
             if(memberCards.length > 1){
-                console.log(memberCards.length) 
                 var cardCollection = cards.CardCollection.forge(memberCards);
-                console.log(JSON.stringify(cardCollection))
                 cardCollection.invokeThen('save', null).then(function() {
                     var apiServiceResponse = response.createResponse({msg: 'success'});
                     response.respondToClient(res, responseOptions, apiServiceResponse);
@@ -93,7 +88,7 @@ var addMember = function(req, res) {
             var apiServiceResponse = response.createResponse({msg: 'failed', err: err.clientError});
             response.respondToClient(res, responseOptions, apiServiceResponse);
         })
-    
+
 }
 
 var updateMember = function(req, res) {
@@ -105,7 +100,6 @@ var updateMember = function(req, res) {
     var memberID = memberData.memberid;
     var memberCards = memberData.cards;
     delete memberData.cards;
-    console.log('Creating Member ' + memberID);
     var member = new Member({memberid: memberID});
     member
         .save(memberData, {patch: true})
@@ -116,7 +110,7 @@ var updateMember = function(req, res) {
             console.log('Could not update member', err);
         })
     if(memberCards.length > 1){
-        console.log(memberCards.length) 
+        console.log(memberCards.length)
         var cardCollection = cards.CardCollection.forge(memberCards);
         console.log(JSON.stringify(cardCollection))
         cardCollection.invokeThen('save', null).then(function() {
@@ -143,7 +137,7 @@ var toggleEnabled = function(req, res) {
     var responseOptions = {};
     responseOptions.callback = req.query.callback || '';
     responseOptions.format = req.query.format || null;
-    
+
     var id = req.params.id;
     new Member()
         .fetch({memberid: id})
@@ -167,7 +161,7 @@ var toggleEnabled = function(req, res) {
         })
 }
 
-module.exports = 
+module.exports =
     { Member: Member
     , getById: getMemberById
     , getAll: getAllMembers
