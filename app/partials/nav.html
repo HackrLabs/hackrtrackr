@@ -6,25 +6,25 @@
       <li class="btn"><a title="" href="/login"><i class="fa fa-share"></i> <span class="text">Logout</span></a></li>
   </ul>
     </div>
-   
+
 <div id="sidebar" ng-controller="NavCtrl">
   <div id="search">
     <input type="text" placeholder="Search here..."/><button type="submit" class="tip-right" title="Search"><i class="fa fa-search"></i></button>
-  </div>	
+  </div>
   <ul>
-    <li ng-class="{active:isActive('/{{merchant}}')}"><a href="/{{merchant}}/"><i class="fa fa-home"></i> <span>Dashboard</span></a></li>
-    <li class="submenu" ng-class="{active:isActive(['/{{ merchant }}/members', '/{{ merchant }}/members/new'])}">
+		<li ng-class="{active:isActive('/')}"><a href="/"><i class="fa fa-home"></i> <span>Dashboard</span></a></li>
+    <li class="submenu" ng-class="{active:isActive(['/members', '/members/new'])}">
       <a href=""><i class="fa fa-group"></i> <span>Members</span> <i class="arrow fa fa-chevron-right"></i></a>
       <ul>
-        <li><a href="/{{ merchant }}/members/">Manage Members</a></li>
-        <li><a href="/{{ merchant }}/members/new"><span class="fa fa-user"></span> Add Member</a></li>
+        <li><a href="/members/">Manage Members</a></li>
+        <li><a href="/members/new"><span class="fa fa-user"></span> Add Member</a></li>
       </ul>
     </li>
-    <li class="submenu" ng-class="{active:isActive(['/{{ merchant }}/employee', '/{{ merchant }}/employee/timesheet'])}">
+    <li class="submenu" ng-class="{active:isActive(['/employee', '/employee/timesheet'])}">
       <a href=""><i class="fa fa-group"></i> <span>Employees</span> <i class="arrow fa fa-chevron-right"></i></a>
       <ul>
-        <li><a href="/{{ merchant }}/employees/">Manage Employees</a></li>
-        <li><a href="/{{ merchant }}/employees/timesheet">Timesheets (Web Clock)</a></li>
+        <li><a href="/employees/">Manage Employees</a></li>
+        <li><a href="/employees/timesheet">Timesheets (Web Clock)</a></li>
       </ul>
     </li>
   </ul>

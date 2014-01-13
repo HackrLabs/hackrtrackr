@@ -1,6 +1,6 @@
 'use strict';
 
-var ctrls = angular.module('HakrTracker.controllers', 
+var ctrls = angular.module('HakrTracker.controllers',
     [ 'HakrTracker.services'
     , 'HakrTracker.factories'
     , 'angular.css.injector'
@@ -8,7 +8,6 @@ var ctrls = angular.module('HakrTracker.controllers',
 );
 
 ctrls.controller('AppCtrl', function($scope, breadcrumbs, $routeParams){
-    $scope.merchant = $routeParams.merchant;
     $scope.breadcrumbs = breadcrumbs;
 });
 
@@ -16,7 +15,6 @@ ctrls.controller('NavCtrl', function($scope, $location){
     var path = $location.path();
     path = path.substring(1);
     var pathArray = path.split('/');
-    $scope.merchant = pathArray[0];
     console.log($scope.merchant)
     $scope.isActive = function(route) {
         if (typeof route == "string") {
@@ -28,8 +26,7 @@ ctrls.controller('NavCtrl', function($scope, $location){
     }
 });
 
-<<<<<<< HEAD:app/js/controllers/controllers.js
-ctrls.controller('DashboardCtrl', function($scope, HakrTrackerAPI, $routeParams){
+ctrls.controller('MerchantDashboardCtrl', function($scope, HakrTrackerAPI, $routeParams, cssInjector){
     var merchant = $routeParams.merchant;
     HakrTrackerAPI.getMembers({merchant: merchant}).then(function(members){
         console.log(members)
@@ -37,7 +34,6 @@ ctrls.controller('DashboardCtrl', function($scope, HakrTrackerAPI, $routeParams)
     })
     cssInjector.add('/css/dash.css');
 });
-
 ctrls.controller('MembersListCtrl', function($scope, HakrTrackerAPI){
     HakrTrackerAPI.getMembers().then(function(members){
         $scope.members = members.data.response.members;
@@ -47,7 +43,7 @@ ctrls.controller('MembersListCtrl', function($scope, HakrTrackerAPI){
         HakrTrackerAPI.toggleMemberActivity(memberID).then(function(res){
             var response = res.data.response;
             $scope.members[idx] = response.members;
-        })    
+        })
     }
 });
 
@@ -60,7 +56,7 @@ ctrls.controller('MembersEditCtrl', function($scope, HakrTrackerAPI, $routeParam
     $scope.cardTypes = [];
     $scope.cardTypes.push({name: 'NFC', value: 'nfc'});
     $scope.cardTypes.push({name: 'RFID (HID)', value: 'rfid'});
-   
+
     $scope.addCard = function(){
         var card = {};
         card.cardid = $scope.card.cardId;
