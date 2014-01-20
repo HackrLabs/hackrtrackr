@@ -17,7 +17,7 @@ app.config(function($routeProvider, $httpProvider, $locationProvider){
         }
     )
     .when('/',
-        { controller: 'MerchantDashboardCtrl'
+        { controller: 'DashboardCtrl'
         , templateUrl: '/partials/dashboard.html'
         }
     )

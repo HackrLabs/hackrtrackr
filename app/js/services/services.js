@@ -10,7 +10,7 @@ services.service('HakrTrackerAPI', function($http){
         params = params || {};
         params.callback = "JSON_CALLBACK";
         return $http.jsonp(host + path, {params: params});
-    } 
+    }
     function post(path, params) {
         params = params || {};
         var config =  {}
@@ -20,10 +20,17 @@ services.service('HakrTrackerAPI', function($http){
         return $http.delete(host + path);
     }
 
+		function put(path) {
+			return $http.put(host + path)
+		}
+
     return {
         getMembers: function(params){
             return load('/members/', params)
         },
+				getMemberById: function(memberID) {
+					return load('/members/' + memberID)
+				},
         addMember: function(data){
             return post('/members/add/', data)
         },
@@ -41,7 +48,42 @@ services.service('HakrTrackerAPI', function($http){
         },
         deleteCard: function(cardID) {
             return del('/members/cards/remove/' + cardID)
+				},
+				getEmployees: function(params) {
+					return load('/employees/', params)
         }
     }
 });
+
+services.service('ModalService', function(){
+	var modal = {};
+	/**
+	 * Creates a modal with the appropriate information
+	 * @public
+	 * @returns {undefined}
+	 */
+	modal.createModal = function() {
+
+	}
+
+	/**
+	 * Displays the modal to the screen
+	 * @private
+	 * @returns {undefined}
+	 */
+	function showModal() {
+
+	}
+
+	/**
+	 * Hides the modal from the screen
+	 * @private
+	 * @returns {undefined}
+	 */
+	function hideModal() {
+
+	}
+
+	return modal
+})
 

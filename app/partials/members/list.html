@@ -13,36 +13,37 @@
   <table class="table table-striped">
     <thead>
       <tr>
+				<td>Member ID</td>
         <td>Full Name</td>
-        <td class="hidden-xs hidden-sm">Handle/Nickname</td>
-        <td class="hidden-xs hidden-sm">Email</td>
-        <td class="hidden-xs hidden-sm">Member Level</td>
+        <td class="visible-lg">Handle/Nickname</td>
+        <td class="visible-lg">Email</td>
+        <td class="visible-lg">Member Level</td>
         <td>Actions</td>
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="member in members | filter:membersearch">
-        <td>{{ member.firstname }} {{ member.lastname }}</td>
-        <td class="hidden-xs hidden-sm">{{ member.handle }}</td>
-        <td class="hidden-xs hidden-sm">{{ member.emailaddress }}</td>
-        <td class="hidden-xs hidden-sm">{{ member.memberlevel }}</td>
-        <td class="hidden-xs hidden-sm">
-          <a href="#/members/edit/{{ member.memberid }}" class="btn btn-primary">Edit</a> 
-          <button ng-click="delete(member.memberid, $index)" class="btn btn-danger">Delete</button> 
-          <button class="btn {{ member.isActive != 1 ? 'btn-warning' : 'btn-success'}}" ng-click="toggleActive(member.memberid, $index)">
-            {{ member.isActive != 1 ? 'Deactivate' : 'Activate'}}
+			<tr ng-repeat="member in members | filter:membersearch | orderBy:member.lastname">
+				<td ng-bind="member.memberid"></td>
+        <td ng-bind="member.firstname + ' ' + member.lastname"></td>
+        <td class="visible-lg" ng-bind="member.handle"></td>
+        <td class="visible-lg" ng-bind="member.emailaddress"></td>
+				<td class="visible-lg" ng-bind="member.memberlevel"></td>
+        <td class="visible-lg">
+          <a href="/members/edit/{{ member.memberid }}" class="btn btn-primary">Edit</a>
+          <button ng-click="deleteMember(member.memberid)" class="btn btn-danger">Delete</button>
+					<button class="btn {{ member.isactive == true ? 'btn-success' : 'btn-warning'}}" ng-click="toggleActive(member.memberid, $index)" ng-bind="member.isactive == true ? 'Active' : 'Inactive'">
           </button>
         </td>
-        <td class="visible-xs visible-sm">
+        <td class="hidden-lg">
           <div class="btn-group">
-            <button type="button" class="btn btn-danger">Actions</button>
-            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+						<button class="btn {{ member.isactive == true ? 'btn-success' : 'btn-warning'}}" ng-click="toggleActive(member.memberid, $index)" ng-bind="member.isactive == true ? 'Active' : 'Inactive'">
+							<button type="button" class="btn dropdown-toggle" ng-class="member.isactive == true ? 'btn-success' : 'btn-warning'" data-toggle="dropdown">
               <span class="caret"></span>
               <span class="sr-only">Toggle Dropdown</span>
             </button>
             <ul class="dropdown-menu" role="menu">
               <li><a href="#/members/edit/{{ member.memberid }}">Edit</a></li>
-              <li><a ng-click="delete(member.memberid, $index)">Delete</a></li>
+              <li><a ng-click="deleteMember(member.memberid)">Delete</a></li>
               <li><a ng-click="toggleActive(member.memberid, $index)">{{ member.isActive != 1 ? 'Deactivate' : 'Activate'}}</a></li>
             </ul>
           </div>

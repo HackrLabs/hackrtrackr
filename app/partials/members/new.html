@@ -49,15 +49,15 @@
           </thead>
           <tbody>
             <tr ng-repeat="card in member.cards">
-              <td>{{ card.id }}</td>
-              <td>{{ card.type}}</td>
+              <td data-ng-bind="card.cardId"></td>
+              <td data-ng-bind="card.type"></td>
             </tr>
           </tbody>
         </table>
         <form class="form-inline" role="form">
           <div class="form-group">
             <label for="card">Card Number</label>
-            <input class="form-control" type="text" id="card" placeholder="ADK458D9" ng-model="card.cardId" /> 
+            <input class="form-control" type="text" id="card" placeholder="ADK458D9" ng-model="card.cardId" />
           </div>
           <div class="form-group">
             <label for="cardType">Card Type</label>
