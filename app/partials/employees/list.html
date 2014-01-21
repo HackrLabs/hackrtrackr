@@ -1,0 +1,54 @@
+<div>
+  <div class="row">
+    <div class="col-xs-6 col-sm-6 col-md-8 col-lg-10">
+      <h1 class="pageHeader">Employees</h1>
+    </div>
+    <div class="col-xs-6 col-sm-6 col-md-4 col-lg-2">
+      <input type="text" class="form-control" placeholder="Find a employee" ng-model="employeesearch" />
+    </div>
+  </div>
+  <div ng-include src="'partials/breadcrumbs.html'"></div>
+  <div class="row">
+    <div class="col-xs-10 col-xs-offset-1 col-sm-10 col-sm-offset-1 col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+				<td>Employee ID</td>
+        <td>Full Name</td>
+        <td class="visible-lg">Handle/Nickname</td>
+        <td class="visible-lg">Email</td>
+        <td class="visible-lg">Member Level</td>
+        <td>Actions</td>
+      </tr>
+    </thead>
+    <tbody>
+			<tr ng-repeat="employee in employees | filter:employeesearch | orderBy:employee.lastname">
+				<td ng-bind="employee.memberid"></td>
+        <td ng-bind="employee.firstname + ' ' + employee.lastname"></td>
+        <td class="visible-lg" ng-bind="employee.handle"></td>
+        <td class="visible-lg" ng-bind="employee.emailaddress"></td>
+				<td class="visible-lg" ng-bind="employee.employeelevel"></td>
+        <td class="visible-lg">
+          <a href="/members/edit/{{ employee.memberid }}" class="btn btn-primary">Edit</a>
+          <button ng-click="deleteMember(employee.employeeid)" class="btn btn-danger">Delete</button>
+					<button class="btn {{ employee.isactive == true ? 'btn-success' : 'btn-warning'}}" ng-click="toggleActive(employee.employeeid, $index)" ng-bind="employee.isactive == true ? 'Active' : 'Inactive'">
+          </button>
+        </td>
+        <td class="hidden-lg">
+          <div class="btn-group">
+						<button class="btn {{ employee.isactive == true ? 'btn-success' : 'btn-warning'}}" ng-click="toggleActive(employee.employeeid, $index)" ng-bind="employee.isactive == true ? 'Active' : 'Inactive'">
+							<button type="button" class="btn dropdown-toggle" ng-class="employee.isactive == true ? 'btn-success' : 'btn-warning'" data-toggle="dropdown">
+              <span class="caret"></span>
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#/members/edit/{{ employee.memberid }}">Edit</a></li>
+              <li><a ng-click="deleteMember(employee.employeeid)">Delete</a></li>
+              <li><a ng-click="toggleActive(employee.employeeid, $index)">{{ employee.isActive != 1 ? 'Deactivate' : 'Activate'}}</a></li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
