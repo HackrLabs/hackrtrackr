@@ -1,0 +1,12 @@
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-header">
+			<button type="button" classs="close" data-dismiss="modal" aria-hidden="true">&times</button>
+			<h4 class="modal-title" id=modalLabel" data-ng-bind="title"></h4>
+		</div>
+		<div class="modal-body" data-ng-bind="body"></div>
+		<div class="modal-footer">
+			<button type="button" class="btn" data-ng-repeat="button in buttons" data-ng-class="button.type" data-ng-bind="button.name">
+		</div>
+	</div>
+</div>
