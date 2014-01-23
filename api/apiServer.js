@@ -5,7 +5,8 @@ var areas = require('./libs/areas'),
     members = require('./libs/members'),
     cards = require('./libs/cards')
     config = require('./libs/config'),
-		response = require('./libs/response');
+		response = require('./libs/response'),
+		employees = require('./libs/employees')
 
 
 var allowCrossDomain = function(req, res, next) {
@@ -47,6 +48,7 @@ app.namespace(config.app.namespace, function(){
     app.post('/members/toggleEnabled/:memberid', members.toggleEnabled);
     app.post('/members/cards/add', cards.addCard);
     app.del('/members/cards/remove/:id', cards.removeCard);
+		app.get('/employees', employees.getAll)
 
 });
 app.listen(config.app.port);
