@@ -11,7 +11,7 @@ var Card = bookshelf.Model.extend(
     , member: function(){
             return this.belongsTo(Member)
         }
-    }    
+    }
 );
 
 var CardCollection = bookshelf.Collection.extend(
@@ -20,8 +20,10 @@ var CardCollection = bookshelf.Collection.extend(
 );
 
 var addCard = function(req, res) {
+		var card = req.body;
+		card.cardid = convertCardToHex(card.cardid);
     Card.forge()
-		.save(req.body)
+		.save(card)
 		.then(function(card){
             console.log(card)
             var apiServiceResponse = response.createResponse({msg: 'success', cardID: card.id})
@@ -59,9 +61,19 @@ var removeCard = function(req, res) {
 		});
 }
 
-module.exports = 
+var convertCardToHex = function(card){
+	var convertedCard = Number(card).toString(16);
+	if(convertedCard.length < 4) {
+		convertedCard = '??0' + convertedCard;
+	} else {
+		convertedCard = '??' + convertedCard;
+	}
+	return convertedCard;
+}
+
+module.exports =
 { Card: Card
-, CardCollection: CardCollection 
+, CardCollection: CardCollection
 , addCard: addCard
 , removeCard: removeCard
 };
